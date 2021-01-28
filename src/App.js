@@ -3,18 +3,18 @@ import './App.css';
 import { XYPlot, LineSeries } from "react-vis";
 
 function App() {
-  // const [value, setvalue] = useState("");
   const [goalLength, setGoalLength] = useState("1week");
   const [category,categoryD] = useState("");
-  const [date,dateD] = useState("");
   const [cost,costD] = useState(""); 
   const [results, resultsD] = useState([]);
   const addInfo =()=> {
-    const resultArr = {category: category, date: date, cost:cost}
+    const hiduke=new Date(); 
+    const month = hiduke.getMonth()+1;
+    const day = hiduke.getDate();
+    const resultArr = {category: category, date: month+ '.' + day, cost:cost}
     const resultArray = [... results, resultArr];
     resultsD(resultArray)
     costD("")
-    dateD("")
   }
   return (
     <div className="App">
@@ -51,16 +51,6 @@ function App() {
         <button>+</button>
         <button>-</button>
       </div>
-      {/* <span>datepicker</span> */}
-      <input 
-        type="text" 
-        placeholder="日付"
-        className="inputDate"
-        value = {date}
-        onChange={(e) => {
-          dateD(e.target.value);
-        }}
-      />
       <span className="inputCost">¥</span>
       <input 
         type="text" 
