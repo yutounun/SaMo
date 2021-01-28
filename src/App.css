@@ -1,38 +1,50 @@
 .App {
   text-align: center;
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  font-size: 40px;
+  border-bottom: 1px black solid;
 }
-
-.App-link {
-  color: #61dafb;
+.footer {
+  /* margin: 5px 0px 5px 200px; */
+  position: absolute;
+  margin-left: 300px;
+  bottom: 0;
 }
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.footer p {
+  display: inline-block;
+  font-size: 30px;
+  width: 200px;
+  padding: 20px;
+  border: black 1px solid;
+  margin: 10px 0;
+}
+.category {
+  font-size: 20px;
+  border: black 1px solid;
+  display: inline-block;
+  margin: 0 20px;
+  width: 150px;
+  padding: 10px 5px;
+}
+.inputCost {
+  height: 100px;
+  font-size: 50px;
+  margin-right: 20px;
+  margin-top: 50px;
+}
+.graph_tmp {
+  height: 35vh;
+  width: 30vw;
+  margin: 0 auto 30px  auto;
+  border: black 1px solid;
+}
+.result {
+  list-style: none;
+}
+.inputDate{
+  font-size: 50px;
+  width: 10vw;
+  margin-right: 20px;
+  margin-top: 50px;
 }
