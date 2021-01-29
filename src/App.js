@@ -1,6 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import firebase from 'firebase'; // 追記
+import 'firebase/firestore'; // 追記
 import './App.css';
-import { XYPlot, LineSeries } from "react-vis";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDor3C9MPpYQwZPJgqD-gkOTk7DaA3OHgU",
+  authDomain: "samo-c765d.firebaseapp.com",
+  databaseURL: "https://samo-c765d-default-rtdb.firebaseio.com",
+  projectId: "samo-c765d",
+  storageBucket: "samo-c765d.appspot.com",
+  messagingSenderId: "561064197302",
+  appId: "1:561064197302:web:fdeb3ff86bf623c1847a17",
+  measurementId: "G-Z4Q410EL9V"
+};
+firebase.initializeApp(firebaseConfig);
+firebase.analytics();
 
 function App() {
   const [goalLength, setGoalLength] = useState("1week");
@@ -17,6 +31,19 @@ function App() {
     resultsD(resultArray)
     costD("")
   }
+  const db = firebase.firestore();
+  useEffect(() => {
+    (async () => {
+      const getFB = await db.collection("SaMo").doc("SaMoResults").get();
+      resultsD(getFB.data().results);
+    })()
+  }, [db])
+  useEffect(() => {
+    (async () => {
+      const docRef = await db.collection('SaMo').doc('SaMoResults');
+      docRef.update({ results: results })
+    })()
+  }, [results, db])
   return (
     <div className="App">
       <header className="App-header">
