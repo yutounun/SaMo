@@ -19,6 +19,9 @@
   border: black 1px solid;
   margin: 10px 0;
 }
+.categories {
+  /* margin-top: 10vh; */
+}
 .category {
   font-size: 20px;
   border: black 1px solid;
@@ -47,4 +50,7 @@
   width: 10vw;
   margin-right: 20px;
   margin-top: 50px;
+}
+.leftMoney {
+  font-size: 20px;
 }

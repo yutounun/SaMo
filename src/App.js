@@ -4,6 +4,7 @@ import { XYPlot, LineSeries } from "react-vis";
 
 function App() {
   const [goalLength, setGoalLength] = useState("1week");
+  const [credit,setCredit] = useState(false);
   const [category,categoryD] = useState("");
   const [cost,costD] = useState(""); 
   const [results, resultsD] = useState([]);
@@ -11,7 +12,7 @@ function App() {
     const hiduke=new Date(); 
     const month = hiduke.getMonth()+1;
     const day = hiduke.getDate();
-    const resultArr = {category: category, date: month+ '.' + day, cost:cost}
+    const resultArr = {credit: credit, category: category, date: month+ '.' + day, cost:cost}
     const resultArray = [... results, resultArr];
     resultsD(resultArray)
     costD("")
@@ -21,11 +22,10 @@ function App() {
       <header className="App-header">
         {goalLength}
       </header>
-      <div className="graph">graph</div>
       <div className="graph_tmp">
         {results.map((result) => (
           <li key={result.date} className="result">
-            {result.date}/{result.category}/¥{result.cost}
+            {result.credit}/{result.date}/{result.category}/¥{result.cost}
           </li>
         ))}
       </div>
@@ -51,6 +51,9 @@ function App() {
         <button>+</button>
         <button>-</button>
       </div>
+      <button className="category" onClick={()=>{
+          setCredit('クレカ')
+      }}>クレカ</button>
       <span className="inputCost">¥</span>
       <input 
         type="text" 
@@ -62,6 +65,7 @@ function App() {
         }}
       />
       <button className="inputCost" onClick={() => addInfo()}>送信</button>
+      <p class="leftMoney">今週は残り¥200使えるよ！</p>
       <footer className="footer">
         <p className="footer_goal">目標</p>
         <p className="footer_top">結果</p>
