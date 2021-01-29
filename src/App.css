@@ -20,7 +20,7 @@
   margin: 10px 0;
 }
 .categories {
-  /* margin-top: 10vh; */
+  margin-top: 10vh;
 }
 .category {
   font-size: 20px;
@@ -29,6 +29,11 @@
   margin: 0 20px;
   width: 150px;
   padding: 10px 5px;
+}
+.creditCard {
+  height: 80px;
+  width: 100px;
+  margin-right: 20px;
 }
 .inputCost {
   height: 100px;
@@ -53,4 +58,10 @@
 }
 .leftMoney {
   font-size: 20px;
+}
+.middle {
+  /* width: 70vw; */
+}
+.plus, .minus {
+  width: 15px;
 }

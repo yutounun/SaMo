@@ -1,7 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import firebase from 'firebase'; // 追記
 import 'firebase/firestore'; // 追記
+import { makeStyles } from '@material-ui/core/styles';
 import './App.css';
+import { Button } from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
+const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+  },
+  paper: {
+    padding: theme.spacing(2),
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+  },
+}));
 
 const firebaseConfig = {
   apiKey: "AIzaSyDor3C9MPpYQwZPJgqD-gkOTk7DaA3OHgU",
@@ -17,6 +31,7 @@ firebase.initializeApp(firebaseConfig);
 firebase.analytics();
 
 function App() {
+  const classes = useStyles();
   const [goalLength, setGoalLength] = useState("1week");
   const [credit,setCredit] = useState(false);
   const [category,categoryD] = useState("");
@@ -49,50 +64,54 @@ function App() {
       <header className="App-header">
         {goalLength}
       </header>
-      <div className="graph_tmp">
-        {results.map((result) => (
-          <li key={result.date} className="result">
-            {result.credit}/{result.date}/{result.category}/¥{result.cost}
-          </li>
-        ))}
+      <div className="middle">
+        <Grid container spacing={3}>
+          <Grid item xs={7}>
+            {/* <Paper className={classes.paper}>xs=12</Paper> */}
+          </Grid>
+        </Grid>
+        {/* <div className="graph_tmp">
+          {results.map((result) => (
+            <li key={result.date} className="result">
+              {result.credit}/{result.date}/{result.category}/¥{result.cost}
+            </li>
+          ))}
+        </div> */}
+        <div className="categories">
+          <Button variant="outlined" disableElevation className="category" onClick={()=>{
+            categoryD('お菓子')
+          }}>お菓子</Button>
+          <Button variant="outlined" disableElevation className="category" onClick={()=>{
+            categoryD('飲み物')
+          }}>飲み物</Button>
+          <Button variant="outlined" disableElevation className="category" onClick={()=>{
+            categoryD('ファッション')
+          }}>ファッション</Button>
+          <Button variant="outlined" disableElevation className="category" onClick={()=>{
+            categoryD('ご飯')
+          }}>ご飯</Button>
+          <Button variant="outlined" disableElevation className="category" onClick={()=>{
+            categoryD('自炊用ご飯')
+          }}>自炊用ご飯</Button>
+          <Button size="small" disableElevation variant="contained" className="plus">+</Button>
+          <Button size="small" disableElevation variant="contained" className="minus">-</Button>
+        </div>
+        <Button size="medium" variant="contained" color="primary" disableElevation className="category creditCard"  onClick={()=>{
+            setCredit('クレカ')
+        }}>クレカ</Button>
+        <span className="inputCost">¥</span>
+        <input 
+          type="text" 
+          className="inputCost"
+          value = {cost}
+          placeholder="金額"
+          onChange={(e) => {
+            costD(e.target.value);
+          }}
+        />
+        <Button variant="contained" size="large" disableElevation className="inputCost" onClick={() => addInfo()}>送信</Button>
+        <p class="leftMoney">今週は残り¥200使えるよ！</p>
       </div>
-      <div className="categories">
-        <button className="category" onClick={()=>{
-          categoryD('お菓子')
-        }}>お菓子</button>
-        <button className="category" onClick={()=>{
-          categoryD('飲み物')
-        }}>飲み物</button>
-        <button className="category" onClick={()=>{
-          categoryD('ファッション')
-        }}>ファッション</button>
-        <button className="category" onClick={()=>{
-          categoryD('ご飯')
-        }}>ご飯</button>
-        <button className="category" onClick={()=>{
-          categoryD('自炊用ご飯')
-        }}>自炊用ご飯</button>
-        <button className="category" onClick={()=>{
-          categoryD('その他')
-        }}>その他</button>
-        <button>+</button>
-        <button>-</button>
-      </div>
-      <button className="category" onClick={()=>{
-          setCredit('クレカ')
-      }}>クレカ</button>
-      <span className="inputCost">¥</span>
-      <input 
-        type="text" 
-        className="inputCost"
-        value = {cost}
-        placeholder="金額"
-        onChange={(e) => {
-          costD(e.target.value);
-        }}
-      />
-      <button className="inputCost" onClick={() => addInfo()}>送信</button>
-      <p class="leftMoney">今週は残り¥200使えるよ！</p>
       <footer className="footer">
         <p className="footer_goal">目標</p>
         <p className="footer_top">結果</p>
@@ -103,4 +122,5 @@ function App() {
 }
 
 export default App;
+
 
