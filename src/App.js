@@ -6,16 +6,29 @@ import './App.css';
 import { Button } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
+import BottomNavigation from '@material-ui/core/BottomNavigation';
+import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
+import RestoreIcon from '@material-ui/icons/Restore';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import LocationOnIcon from '@material-ui/icons/LocationOn';
+import clsx from 'clsx';
+import Drawer from '@material-ui/core/Drawer';
+import List from '@material-ui/core/List';
+import Divider from '@material-ui/core/Divider';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
+import MailIcon from '@material-ui/icons/Mail';
+
+const useStyles = makeStyles({
+  list: {
+    width: 250,
   },
-  paper: {
-    padding: theme.spacing(2),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
+  fullList: {
+    width: 'auto',
   },
-}));
+});
 
 const firebaseConfig = {
   apiKey: "AIzaSyDor3C9MPpYQwZPJgqD-gkOTk7DaA3OHgU",
@@ -31,8 +44,41 @@ firebase.initializeApp(firebaseConfig);
 firebase.analytics();
 
 function App() {
+  const [state, setState] = React.useState({
+    top: false,
+    left: false,
+    bottom: false,
+    right: false,
+  });
+  const toggleDrawer = (anchor, open) => (event) => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+
+    setState({ ...state, [anchor]: open });
+  };
+  const list = (anchor) => (
+    <div
+      className={clsx(classes.list, {
+        [classes.fullList]: anchor === 'top' || anchor === 'bottom',
+      })}
+      role="presentation"
+      onClick={toggleDrawer(anchor, false)}
+      onKeyDown={toggleDrawer(anchor, false)}
+    >
+      <List>
+        {['TOP', '目標入力', '結果'].map((text, index) => (
+          <ListItem button key={text}>
+            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+            <ListItemText primary={text} />
+          </ListItem>
+        ))}
+      </List>
+    </div>
+  );
   const classes = useStyles();
-  const [goalLength, setGoalLength] = useState("1week");
+  const [value, setValue] = React.useState(0);
+  const [goalLength, setGoalLength] = useState("1週間");
   const [credit,setCredit] = useState(false);
   const [category,categoryD] = useState("");
   const [cost,costD] = useState(""); 
@@ -61,15 +107,20 @@ function App() {
   }, [results, db])
   return (
     <div className="App">
-      <header className="App-header">
-        {goalLength}
+      <header>
+        <div class="openSidebar">
+          {['三'].map((anchor) => (
+            <React.Fragment key={anchor}>
+              <Button onClick={toggleDrawer(anchor, true)}>{anchor}</Button>
+              <Drawer anchor={anchor} open={state[anchor]} onClose={toggleDrawer(anchor, false)}>
+                {list(anchor)}
+              </Drawer>
+            </React.Fragment>
+          ))}
+        </div>
+        <div className="App-header">SaMo {goalLength}計画</div>
       </header>
       <div className="middle">
-        <Grid container spacing={3}>
-          <Grid item xs={7}>
-            {/* <Paper className={classes.paper}>xs=12</Paper> */}
-          </Grid>
-        </Grid>
         {/* <div className="graph_tmp">
           {results.map((result) => (
             <li key={result.date} className="result">
@@ -96,26 +147,37 @@ function App() {
           <Button size="small" disableElevation variant="contained" className="plus">+</Button>
           <Button size="small" disableElevation variant="contained" className="minus">-</Button>
         </div>
-        <Button size="medium" variant="contained" color="primary" disableElevation className="category creditCard"  onClick={()=>{
-            setCredit('クレカ')
-        }}>クレカ</Button>
-        <span className="inputCost">¥</span>
-        <input 
-          type="text" 
-          className="inputCost"
-          value = {cost}
-          placeholder="金額"
-          onChange={(e) => {
-            costD(e.target.value);
-          }}
-        />
-        <Button variant="contained" size="large" disableElevation className="inputCost" onClick={() => addInfo()}>送信</Button>
-        <p class="leftMoney">今週は残り¥200使えるよ！</p>
+        <div className="creditNcost">
+          <Button size="medium" variant="contained" color="primary" disableElevation className="category creditCard"  onClick={()=>{
+              setCredit('クレカ')
+          }}>クレカ</Button>
+          <span className="yen">¥</span>
+          <input 
+            type="text" 
+            className="inputCost"
+            value = {cost}
+            placeholder="金額"
+            onChange={(e) => {
+              costD(e.target.value);
+            }}
+          />
+          <Button variant="contained" size="large" disableElevation className="inputCost" onClick={() => addInfo()}>送信</Button>
+        </div>
+        <p class="leftMoney">今週は残り<span className="leftCost">¥200</span>使えるよ！</p>
       </div>
       <footer className="footer">
-        <p className="footer_goal">目標</p>
-        <p className="footer_top">結果</p>
-        <p className="footer_record">記録</p>
+        <BottomNavigation
+          value={value}
+          onChange={(event, newValue) => {
+            setValue(newValue);
+          }}
+          showLabels
+          className={classes.root}
+        >
+          <BottomNavigationAction className="goal" label="Goal" icon={<RestoreIcon />} />
+          <BottomNavigationAction className="top"label="Top" icon={<FavoriteIcon />} />
+          <BottomNavigationAction className="record"label="Record" icon={<LocationOnIcon />} />
+        </BottomNavigation>
       </footer>
     </div>
   );

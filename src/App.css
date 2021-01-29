@@ -1,26 +1,46 @@
 .App {
+  background: rgb(227, 229, 232);
+  height: 100vh;
   text-align: center;
+  font-weight: bold;
+  font-family: Arial;
 }
 .App-header {
+  text-align: center;
+  margin: 0 auto;
+  font-size: 30px;
+  padding-right: 60px;
+}
+.openSidebar .MuiButton-label {
+  color: rgb(52, 116, 235);
+  font-size: 20px;
+  font-weight: bold;
+}
+.openSidebar {
+  color: rgb(52, 116, 235);
+}
+header {
+  color: rgb(52, 116, 235);
+  background-color: white;
+  display: flex;
   font-size: 40px;
   border-bottom: 1px black solid;
 }
 .footer {
   /* margin: 5px 0px 5px 200px; */
   position: absolute;
-  margin-left: 300px;
+  margin-left: 450px;
   bottom: 0;
-}
-.footer p {
-  display: inline-block;
-  font-size: 30px;
-  width: 200px;
-  padding: 20px;
-  border: black 1px solid;
-  margin: 10px 0;
 }
 .categories {
   margin-top: 10vh;
+}
+.categories .MuiButton-outlined {
+  margin: 10px;
+  width: 120px;
+}
+.categories .MuiButton-containedSizeSmall {
+  margin: 5px;
 }
 .category {
   font-size: 20px;
@@ -33,7 +53,10 @@
 .creditCard {
   height: 80px;
   width: 100px;
-  margin-right: 20px;
+}
+.MuiButton-disableElevation {
+  box-shadow: none;
+  height: 80px;
 }
 .inputCost {
   height: 100px;
@@ -41,26 +64,37 @@
   margin-right: 20px;
   margin-top: 50px;
 }
-.graph_tmp {
-  height: 35vh;
-  width: 30vw;
-  margin: 0 auto 30px  auto;
-  border: black 1px solid;
+.sendCost {
+  height: 100px;
+  font-size: 50px;
+  margin-right: 20px;
+  margin-top: 50px;
+  margin-bottom: 15px;
+}
+.yen {
+  margin-left: 30px;
+  height: 100px;
+  font-size: 50px;
+  margin-right: 20px;
+}
+.leftCost {
+  font-size: 50px;
+}
+.creditNcost {
+  margin: 50px 0;
 }
 .result {
   list-style: none;
 }
-.inputDate{
-  font-size: 50px;
-  width: 10vw;
-  margin-right: 20px;
-  margin-top: 50px;
+.creditNcost .MuiButton-containedSizeLarge {
+  padding: 8px 22px;
+  border-radius: 300px;
+  height: 80px;
+  font-size: 0.9375rem;
+  margin-bottom: 20px;
 }
 .leftMoney {
   font-size: 20px;
-}
-.middle {
-  /* width: 70vw; */
 }
 .plus, .minus {
   width: 15px;
