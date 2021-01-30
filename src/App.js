@@ -20,6 +20,12 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
+import ChildCareOutlinedIcon from '@material-ui/icons/ChildCareOutlined';//おやつ
+import SupervisorAccountOutlinedIcon from '@material-ui/icons/SupervisorAccountOutlined';//交際費
+import LocalMallOutlinedIcon from '@material-ui/icons/LocalMallOutlined'; //ショッピング
+import FastfoodOutlinedIcon from '@material-ui/icons/FastfoodOutlined'; //外食
+import KitchenOutlinedIcon from '@material-ui/icons/KitchenOutlined'; //食材
+import CreditCardIcon from '@material-ui/icons/CreditCard'; //クレカ
 
 const useStyles = makeStyles({
   list: {
@@ -78,7 +84,7 @@ function App() {
   );
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
-  const [goalLength, setGoalLength] = useState("1週間");
+  const [goalLength, setGoalLength] = useState("");
   const [credit,setCredit] = useState(false);
   const [category,categoryD] = useState("");
   const [cost,costD] = useState(""); 
@@ -118,7 +124,7 @@ function App() {
             </React.Fragment>
           ))}
         </div>
-        <div className="App-header">SaMo {goalLength}計画</div>
+        <div className="App-header">SaMo {goalLength}</div>
       </header>
       <div className="middle">
         {/* <div className="graph_tmp">
@@ -130,27 +136,27 @@ function App() {
         </div> */}
         <div className="categories">
           <Button variant="outlined" disableElevation className="category" onClick={()=>{
-            categoryD('お菓子')
-          }}>お菓子</Button>
+            categoryD('おやつ')
+          }}><ChildCareOutlinedIcon/><span className="category_title">おやつ</span></Button>
           <Button variant="outlined" disableElevation className="category" onClick={()=>{
-            categoryD('飲み物')
-          }}>飲み物</Button>
+            categoryD('交際費')
+          }}><SupervisorAccountOutlinedIcon/><span className="category_title">交際費</span></Button>
           <Button variant="outlined" disableElevation className="category" onClick={()=>{
-            categoryD('ファッション')
-          }}>ファッション</Button>
+            categoryD('ショッピング')
+          }}><LocalMallOutlinedIcon/><span className="category_title">ショッピング</span></Button>
           <Button variant="outlined" disableElevation className="category" onClick={()=>{
-            categoryD('ご飯')
-          }}>ご飯</Button>
+            categoryD('外食')
+          }}><FastfoodOutlinedIcon/><span className="category_title">外食</span></Button>
           <Button variant="outlined" disableElevation className="category" onClick={()=>{
-            categoryD('自炊用ご飯')
-          }}>自炊用ご飯</Button>
+            categoryD('食材')
+          }}><KitchenOutlinedIcon/><span className="category_title">食材</span></Button>
           <Button size="small" disableElevation variant="contained" className="plus">+</Button>
           <Button size="small" disableElevation variant="contained" className="minus">-</Button>
         </div>
         <div className="creditNcost">
           <Button size="medium" variant="contained" color="primary" disableElevation className="category creditCard"  onClick={()=>{
               setCredit('クレカ')
-          }}>クレカ</Button>
+          }}><CreditCardIcon/><span className="category_title">クレカ</span></Button>
           <span className="yen">¥</span>
           <input 
             type="text" 
