@@ -115,11 +115,13 @@ header {
   font-size: 30px;
   width: 100%;
   display: inherit;
+  color: #595858;
   align-items: inherit;
   justify-content: inherit;
 }
 .minus .MuiButton-label {/*minus*/
   font-size: 50px;
+  color: #595858;
   font-weight: lighter;
   width: 100%;
   display: inherit;

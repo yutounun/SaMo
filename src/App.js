@@ -26,6 +26,9 @@ import LocalMallOutlinedIcon from '@material-ui/icons/LocalMallOutlined'; //シ�
 import FastfoodOutlinedIcon from '@material-ui/icons/FastfoodOutlined'; //外食
 import KitchenOutlinedIcon from '@material-ui/icons/KitchenOutlined'; //食材
 import CreditCardIcon from '@material-ui/icons/CreditCard'; //クレカ
+import BarChartIcon from '@material-ui/icons/BarChart'; //チャート
+import HomeIcon from '@material-ui/icons/Home';//top
+import ExploreIcon from '@material-ui/icons/Explore';//目標入力
 
 const useStyles = makeStyles({
   list: {
@@ -73,12 +76,18 @@ function App() {
       onKeyDown={toggleDrawer(anchor, false)}
     >
       <List>
-        {['TOP', '目標入力', '結果'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
+        <ListItem button key='TOP'>
+          <ListItemIcon><HomeIcon /></ListItemIcon>
+          <ListItemText primary='TOP' />
+        </ListItem>
+        <ListItem button key='目標'>
+          <ListItemIcon><ExploreIcon /></ListItemIcon>
+          <ListItemText primary='目標' />
+        </ListItem>
+        <ListItem button key='レポート'>
+          <ListItemIcon><BarChartIcon /></ListItemIcon>
+          <ListItemText primary='レポート' />
+        </ListItem>
       </List>
     </div>
   );
