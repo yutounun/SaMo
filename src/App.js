@@ -165,20 +165,6 @@ function App() {
         </div>
         <p class="leftMoney">今週は残り<span className="leftCost">¥200</span>使えるよ！</p>
       </div>
-      <footer className="footer">
-        <BottomNavigation
-          value={value}
-          onChange={(event, newValue) => {
-            setValue(newValue);
-          }}
-          showLabels
-          className={classes.root}
-        >
-          <BottomNavigationAction className="goal" label="Goal" icon={<RestoreIcon />} />
-          <BottomNavigationAction className="top"label="Top" icon={<FavoriteIcon />} />
-          <BottomNavigationAction className="record"label="Record" icon={<LocationOnIcon />} />
-        </BottomNavigation>
-      </footer>
     </div>
   );
 }
