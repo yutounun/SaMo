@@ -19,6 +19,7 @@ import CreditCardIcon from '@material-ui/icons/CreditCard'; //クレカ
 import BarChartIcon from '@material-ui/icons/BarChart'; //チャート
 import HomeIcon from '@material-ui/icons/Home';//top
 import ExploreIcon from '@material-ui/icons/Explore';//目標入力
+import { BrowserRouter, Route, Link } from 'react-router-dom'
 
 const useStyles = makeStyles({
   list: {
@@ -43,74 +44,8 @@ firebase.initializeApp(firebaseConfig);
 firebase.analytics();
 
 function App() {
-  const [state, setState] = React.useState({
-    top: false,
-    left: false,
-    bottom: false,
-    right: false,
-  });
-  const toggleDrawer = (anchor, open) => (event) => {
-    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-      return;
-    }
-
-    setState({ ...state, [anchor]: open });
-  };
-  const list = (anchor) => (
-    <div
-      className={clsx(classes.list, {
-        [classes.fullList]: anchor === 'top' || anchor === 'bottom',
-      })}
-      role="presentation"
-      onClick={toggleDrawer(anchor, false)}
-      onKeyDown={toggleDrawer(anchor, false)}
-    >
-      <List>
-        <ListItem button key='TOP'>
-          <ListItemIcon><HomeIcon /></ListItemIcon>
-          <ListItemText primary='TOP' />
-        </ListItem>
-        <ListItem button key='目標'>
-          <ListItemIcon><ExploreIcon /></ListItemIcon>
-          <ListItemText primary='目標' />
-        </ListItem>
-        <ListItem button key='レポート'>
-          <ListItemIcon><BarChartIcon /></ListItemIcon>
-          <ListItemText primary='レポート' />
-        </ListItem>
-      </List>
-    </div>
-  );
-  const classes = useStyles();
-  const [goalLength, setGoalLength] = useState("");
-  const [credit,setCredit] = useState(false);
-  const [category,categoryD] = useState("");
-  const [cost,costD] = useState(""); 
-  const [results, resultsD] = useState([]);
-  const addInfo =()=> {
-    const hiduke=new Date(); 
-    const month = hiduke.getMonth()+1;
-    const day = hiduke.getDate();
-    const resultArr = {credit: credit, category: category, date: month+ '.' + day, cost:cost}
-    const resultArray = [... results, resultArr];
-    resultsD(resultArray)
-    costD("")
-  }
-  const db = firebase.firestore();
-  useEffect(() => {
-    (async () => {
-      const getFB = await db.collection("SaMo").doc("SaMoResults").get();
-      resultsD(getFB.data().results);
-    })()
-  }, [db])
-  useEffect(() => {
-    (async () => {
-      const docRef = await db.collection('SaMo').doc('SaMoResults');
-      docRef.update({ results: results })
-    })()
-  }, [results, db])
-  return (
-    <div className="App">
+  const Home = () => (
+    <div>
       <header>
         <div class="openSidebar">
           {['三'].map((anchor) => (
@@ -125,14 +60,7 @@ function App() {
         <div className="App-header">SaMo {goalLength}</div>
       </header>
       <div className="middle">
-        {/* <div className="graph_tmp">
-          {results.map((result) => (
-            <li key={result.date} className="result">
-              {result.credit}/{result.date}/{result.category}/¥{result.cost}
-            </li>
-          ))}
-        </div> */}
-        <div className="categories">
+              <div className="categories">
           <Button variant="outlined" disableElevation className="category" onClick={()=>{
             categoryD('おやつ')
           }}><ChildCareOutlinedIcon/><span className="category_title">おやつ</span></Button>
@@ -169,6 +97,122 @@ function App() {
         </div>
         <p class="leftMoney">今週は残り<span className="leftCost">¥200</span>使えるよ！</p>
       </div>
+    </div>
+  )
+  const Goal = () => (
+    <div>
+      <header>
+        <div class="openSidebar">
+          {['三'].map((anchor) => (
+            <React.Fragment key={anchor}>
+              <Button onClick={toggleDrawer(anchor, true)}>{anchor}</Button>
+              <Drawer anchor={anchor} open={state[anchor]} onClose={toggleDrawer(anchor, false)}>
+                {list(anchor)}
+              </Drawer>
+            </React.Fragment>
+          ))}
+        </div>
+        <div className="App-header">SaMo {goalLength}</div>
+      </header>
+      <h2>目標</h2>
+      <p>ここにフレンズの目標を書きます</p>
+    </div>
+  )
+  const Graph = () => (
+    <div>
+      <header>
+        <div class="openSidebar">
+          {['三'].map((anchor) => (
+            <React.Fragment key={anchor}>
+              <Button onClick={toggleDrawer(anchor, true)}>{anchor}</Button>
+              <Drawer anchor={anchor} open={state[anchor]} onClose={toggleDrawer(anchor, false)}>
+                {list(anchor)}
+              </Drawer>
+            </React.Fragment>
+          ))}
+        </div>
+        <div className="App-header">SaMo {goalLength}</div>
+      </header>
+      <h2>グラフ</h2>
+      <p>ここにフレンズのグラフを書きます</p>
+    </div>
+  )
+  const [state, setState] = React.useState({
+    top: false,
+    left: false,
+    bottom: false,
+    right: false,
+  });
+  
+  const toggleDrawer = (anchor, open) => (event) => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+
+    setState({ ...state, [anchor]: open });
+  };
+  const list = (anchor) => (
+    <div
+      className={clsx(classes.list, {
+        [classes.fullList]: anchor === 'top' || anchor === 'bottom',
+      })}
+      role="presentation"
+      onClick={toggleDrawer(anchor, false)}
+      onKeyDown={toggleDrawer(anchor, false)}
+    >
+      <List>
+        <ListItem button key='TOP'>
+          <ListItemIcon><HomeIcon /></ListItemIcon>
+          <Link to='/'><ListItemText primary='TOP' /></Link>
+        </ListItem>
+        <ListItem button key='目標'>
+          <ListItemIcon><ExploreIcon /></ListItemIcon>
+          <Link to='/Goal'><ListItemText primary='目標' /></Link>
+        </ListItem>
+        <ListItem button key='レポート'>
+          <ListItemIcon><BarChartIcon /></ListItemIcon>
+          <Link to='/Graph'><ListItemText primary='レポート' /></Link>
+        </ListItem>
+      </List>
+    </div>
+  );
+  const classes = useStyles();
+  const [goalLength, setGoalLength] = useState("");
+  const [credit,setCredit] = useState(false);
+  const [category,categoryD] = useState("");
+  const [cost,costD] = useState(""); 
+  const [results, resultsD] = useState([]);
+  const addInfo =()=> {
+    const hiduke=new Date(); 
+    const month = hiduke.getMonth()+1;
+    const day = hiduke.getDate();
+    const resultArr = {credit: credit, category: category, date: month+ '.' + day, cost:cost}
+    const resultArray = [... results, resultArr];
+    resultsD(resultArray)
+    costD("")
+  }
+  const db = firebase.firestore();
+  useEffect(() => {
+    (async () => {
+      const getFB = await db.collection("SaMo").doc("SaMoResults").get();
+      resultsD(getFB.data().results);
+    })()
+  }, [db])
+  useEffect(() => {
+    (async () => {
+      const docRef = await db.collection('SaMo').doc('SaMoResults');
+      docRef.update({ results: results })
+    })()
+  }, [results, db])
+  return (
+    <div className="App">
+      <BrowserRouter>
+        <div>
+          <Route exact path='/' component={Home} />
+          <Route path='/Goal' component={Goal} />
+          <Route path='/Graph' component={Graph} />
+        </div>
+      </BrowserRouter>
     </div>
   );
 }
