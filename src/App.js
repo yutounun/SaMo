@@ -1,7 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import firebase from 'firebase'; // 追記
 import 'firebase/firestore'; // 追記
+import { makeStyles } from '@material-ui/core/styles';
 import './App.css';
+import { Button } from '@material-ui/core';
+import clsx from 'clsx';
+import Drawer from '@material-ui/core/Drawer';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import ChildCareOutlinedIcon from '@material-ui/icons/ChildCareOutlined';//おやつ
+import SupervisorAccountOutlinedIcon from '@material-ui/icons/SupervisorAccountOutlined';//交際費
+import LocalMallOutlinedIcon from '@material-ui/icons/LocalMallOutlined'; //ショッピング
+import FastfoodOutlinedIcon from '@material-ui/icons/FastfoodOutlined'; //外食
+import KitchenOutlinedIcon from '@material-ui/icons/KitchenOutlined'; //食材
+import CreditCardIcon from '@material-ui/icons/CreditCard'; //クレカ
+import BarChartIcon from '@material-ui/icons/BarChart'; //チャート
+import HomeIcon from '@material-ui/icons/Home';//top
+import ExploreIcon from '@material-ui/icons/Explore';//目標入力
+
+const useStyles = makeStyles({
+  list: {
+    width: 250,
+  },
+  fullList: {
+    width: 'auto',
+  },
+});
 
 const firebaseConfig = {
   apiKey: "AIzaSyDor3C9MPpYQwZPJgqD-gkOTk7DaA3OHgU",
@@ -17,7 +43,46 @@ firebase.initializeApp(firebaseConfig);
 firebase.analytics();
 
 function App() {
-  const [goalLength, setGoalLength] = useState("1week");
+  const [state, setState] = React.useState({
+    top: false,
+    left: false,
+    bottom: false,
+    right: false,
+  });
+  const toggleDrawer = (anchor, open) => (event) => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+
+    setState({ ...state, [anchor]: open });
+  };
+  const list = (anchor) => (
+    <div
+      className={clsx(classes.list, {
+        [classes.fullList]: anchor === 'top' || anchor === 'bottom',
+      })}
+      role="presentation"
+      onClick={toggleDrawer(anchor, false)}
+      onKeyDown={toggleDrawer(anchor, false)}
+    >
+      <List>
+        <ListItem button key='TOP'>
+          <ListItemIcon><HomeIcon /></ListItemIcon>
+          <ListItemText primary='TOP' />
+        </ListItem>
+        <ListItem button key='目標'>
+          <ListItemIcon><ExploreIcon /></ListItemIcon>
+          <ListItemText primary='目標' />
+        </ListItem>
+        <ListItem button key='レポート'>
+          <ListItemIcon><BarChartIcon /></ListItemIcon>
+          <ListItemText primary='レポート' />
+        </ListItem>
+      </List>
+    </div>
+  );
+  const classes = useStyles();
+  const [goalLength, setGoalLength] = useState("");
   const [credit,setCredit] = useState(false);
   const [category,categoryD] = useState("");
   const [cost,costD] = useState(""); 
@@ -46,61 +111,68 @@ function App() {
   }, [results, db])
   return (
     <div className="App">
-      <header className="App-header">
-        {goalLength}
+      <header>
+        <div class="openSidebar">
+          {['三'].map((anchor) => (
+            <React.Fragment key={anchor}>
+              <Button onClick={toggleDrawer(anchor, true)}>{anchor}</Button>
+              <Drawer anchor={anchor} open={state[anchor]} onClose={toggleDrawer(anchor, false)}>
+                {list(anchor)}
+              </Drawer>
+            </React.Fragment>
+          ))}
+        </div>
+        <div className="App-header">SaMo {goalLength}</div>
       </header>
-      <div className="graph_tmp">
-        {results.map((result) => (
-          <li key={result.date} className="result">
-            {result.credit}/{result.date}/{result.category}/¥{result.cost}
-          </li>
-        ))}
+      <div className="middle">
+        {/* <div className="graph_tmp">
+          {results.map((result) => (
+            <li key={result.date} className="result">
+              {result.credit}/{result.date}/{result.category}/¥{result.cost}
+            </li>
+          ))}
+        </div> */}
+        <div className="categories">
+          <Button variant="outlined" disableElevation className="category" onClick={()=>{
+            categoryD('おやつ')
+          }}><ChildCareOutlinedIcon/><span className="category_title">おやつ</span></Button>
+          <Button variant="outlined" disableElevation className="category" onClick={()=>{
+            categoryD('交際費')
+          }}><SupervisorAccountOutlinedIcon/><span className="category_title">交際費</span></Button>
+          <Button variant="outlined" disableElevation className="category" onClick={()=>{
+            categoryD('ショッピング')
+          }}><LocalMallOutlinedIcon/><span className="category_title">ショッピング</span></Button>
+          <Button variant="outlined" disableElevation className="category" onClick={()=>{
+            categoryD('外食')
+          }}><FastfoodOutlinedIcon/><span className="category_title">外食</span></Button>
+          <Button variant="outlined" disableElevation className="category" onClick={()=>{
+            categoryD('食材')
+          }}><KitchenOutlinedIcon/><span className="category_title">食材</span></Button>
+          <Button size="small" disableElevation variant="contained" className="plus">+</Button>
+          <Button size="small" disableElevation variant="contained" className="minus">-</Button>
+        </div>
+        <div className="creditNcost">
+          <Button size="medium" variant="contained" color="primary" disableElevation className="category creditCard"  onClick={()=>{
+              setCredit('クレカ')
+          }}><CreditCardIcon/><span className="category_title">クレカ</span></Button>
+          <span className="yen">¥</span>
+          <input 
+            type="text" 
+            className="inputCost"
+            value = {cost}
+            placeholder="金額"
+            onChange={(e) => {
+              costD(e.target.value);
+            }}
+          />
+          <Button variant="contained" size="large" disableElevation className="inputCost" onClick={() => addInfo()}>送信</Button>
+        </div>
+        <p class="leftMoney">今週は残り<span className="leftCost">¥200</span>使えるよ！</p>
       </div>
-      <div className="categories">
-        <button className="category" onClick={()=>{
-          categoryD('お菓子')
-        }}>お菓子</button>
-        <button className="category" onClick={()=>{
-          categoryD('飲み物')
-        }}>飲み物</button>
-        <button className="category" onClick={()=>{
-          categoryD('ファッション')
-        }}>ファッション</button>
-        <button className="category" onClick={()=>{
-          categoryD('ご飯')
-        }}>ご飯</button>
-        <button className="category" onClick={()=>{
-          categoryD('自炊用ご飯')
-        }}>自炊用ご飯</button>
-        <button className="category" onClick={()=>{
-          categoryD('その他')
-        }}>その他</button>
-        <button>+</button>
-        <button>-</button>
-      </div>
-      <button className="category" onClick={()=>{
-          setCredit('クレカ')
-      }}>クレカ</button>
-      <span className="inputCost">¥</span>
-      <input 
-        type="text" 
-        className="inputCost"
-        value = {cost}
-        placeholder="金額"
-        onChange={(e) => {
-          costD(e.target.value);
-        }}
-      />
-      <button className="inputCost" onClick={() => addInfo()}>送信</button>
-      <p class="leftMoney">今週は残り¥200使えるよ！</p>
-      <footer className="footer">
-        <p className="footer_goal">目標</p>
-        <p className="footer_top">結果</p>
-        <p className="footer_record">記録</p>
-      </footer>
     </div>
   );
 }
 
 export default App;
+
 
