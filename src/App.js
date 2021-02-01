@@ -145,7 +145,11 @@ function App() {
         <div className="App-header">SaMo {goalLength}</div>
       </header>
       <h2>グラフ</h2>
-      <p>ここにフレンズのグラフを書きます</p>
+      {results.map((result) => (
+            <li key={result.date} className="result">
+              {result.credit}/{result.date}/{result.category}/¥{result.cost}
+            </li>
+          ))}
     </div>
   )
   const [state, setState] = React.useState({
