@@ -145,6 +145,7 @@ function App() {
         <div className="App-header">SaMo {goalLength}</div>
       </header>
       <h2>グラフ</h2>
+      {totalPayment}
       {results.map((result) => (
             <li key={result.date} className="result">
               {result.credit}/{result.date}/{result.category}/¥{result.cost}
@@ -194,6 +195,7 @@ function App() {
   const [goalLength, setGoalLength] = useState("");
   const [credit,setCredit] = useState(false);
   const [category,categoryD] = useState("");
+  const [totalPayment, settotalPayment] = useState(0);
   const [cost,costD] = useState(""); 
   const [results, resultsD] = useState([]);
   const [leftCost, setleftCost] = useState(""); //使用可能金額
@@ -206,6 +208,7 @@ function App() {
     resultsD(resultArray)
     costD("")
     resultArray.map((result) => {
+      settotalPayment(parseInt(totalPayment) + parseInt(result.cost))
       setleftCost(leftCost-result.cost);//使用可能金額の算出
     })
   }
