@@ -40,7 +40,9 @@ const firebaseConfig = {
   appId: "1:561064197302:web:fdeb3ff86bf623c1847a17",
   measurementId: "G-Z4Q410EL9V"
 };
-firebase.initializeApp(firebaseConfig);
+if (firebase.apps.length === 0) {
+  firebase.initializeApp(firebaseConfig);
+}
 firebase.analytics();
 
 function App() {
@@ -190,7 +192,7 @@ function App() {
   const [category,categoryD] = useState("");
   const [cost,costD] = useState(""); 
   const [results, resultsD] = useState([]);
-  const [leftCost, setleftCost] = useState("??"); //使用可能金額
+  const [leftCost, setleftCost] = useState(""); //使用可能金額
   const addInfo =()=> {
     const hiduke=new Date(); 
     const month = hiduke.getMonth()+1;
