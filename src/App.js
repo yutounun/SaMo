@@ -95,7 +95,7 @@ function App() {
           />
           <Button variant="contained" size="large" disableElevation className="inputCost" onClick={() => addInfo()}>送信</Button>
         </div>
-        <p class="leftMoney">今週は残り<span className="leftCost">¥200</span>使えるよ！</p>
+        <p class="leftMoney">今週は残り<span className="leftCost">¥{leftCost}</span>使えるよ！</p>
       </div>
     </div>
   )
@@ -115,7 +115,16 @@ function App() {
         <div className="App-header">SaMo {goalLength}</div>
       </header>
       <h2>目標</h2>
-      <p>ここにフレンズの目標を書きます</p>
+      <input 
+        type="text" 
+        className="inputCost"
+        value = {leftCost}
+        placeholder="金額"
+        onChange={(e) => {
+          setleftCost(e.target.value);
+        }}
+      />
+      <Button variant="contained" size="large" disableElevation className="inputCost">送信</Button>
     </div>
   )
   const Graph = () => (
@@ -181,6 +190,7 @@ function App() {
   const [category,categoryD] = useState("");
   const [cost,costD] = useState(""); 
   const [results, resultsD] = useState([]);
+  const [leftCost, setleftCost] = useState("??"); //使用可能金額
   const addInfo =()=> {
     const hiduke=new Date(); 
     const month = hiduke.getMonth()+1;
@@ -189,6 +199,9 @@ function App() {
     const resultArray = [... results, resultArr];
     resultsD(resultArray)
     costD("")
+    resultArray.map((result) => {
+      setleftCost(leftCost-result.cost);//使用可能金額の算出
+    })
   }
   const db = firebase.firestore();
   useEffect(() => {
