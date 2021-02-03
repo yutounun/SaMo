@@ -19,7 +19,8 @@ import CreditCardIcon from '@material-ui/icons/CreditCard'; //クレカ
 import BarChartIcon from '@material-ui/icons/BarChart'; //チャート
 import HomeIcon from '@material-ui/icons/Home';//top
 import ExploreIcon from '@material-ui/icons/Explore';//目標入力
-import { BrowserRouter, Route, Link } from 'react-router-dom'
+import { BrowserRouter, Route, Link } from 'react-router-dom' // ルーティング
+import { PieChart, Pie, Text } from 'recharts' //チャート
 
 const useStyles = makeStyles({
   list: {
@@ -145,12 +146,18 @@ function App() {
         <div className="App-header">SaMo {goalLength}</div>
       </header>
       <h2>グラフ</h2>
-      {totalPayment}
       {results.map((result) => (
-            <li key={result.date} className="result">
-              {result.credit}/{result.date}/{result.category}/¥{result.cost}
-            </li>
-          ))}
+        <li key={result.date} className="result">
+          {result.credit}/{result.date}/{result.category}/¥{result.cost}
+        </li>
+      ))}
+      {/* <PieChart width={1370} height={400}>
+        <Pie data={Data} dataKey="value" cx="50%" cy="50%" outerRadius={100} fill="#82ca9d" label/>
+      </PieChart> */}
+      <PieChart width={1370} height={400}>
+        <Pie data={Data} dataKey="value" cx="50%" cy="50%" outerRadius={100} fill="#82ca9d" label={label}/>
+      </PieChart>
+      <p>今週は合計で{totalPayment}円利用済みです</p>
     </div>
   )
   const [state, setState] = React.useState({
@@ -159,6 +166,25 @@ function App() {
     bottom: false,
     right: false,
   });
+  const label = ({ name, value, cx, x, y }) => {
+    const textAnchor = x > cx ? "start" : "end";
+    return (
+      <>
+        <Text x={x} y={y} textAnchor={textAnchor} fill="#82ca9d">
+          {name}
+        </Text>
+        <Text
+          x={x}
+          y={y}
+          dominantBaseline="hanging"
+          textAnchor={textAnchor}
+          fill="#82ca9d"
+        >
+          {value}
+        </Text>
+      </>
+    );
+  };
   const toggleDrawer = (anchor, open) => (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
@@ -199,6 +225,35 @@ function App() {
   const [cost,costD] = useState(""); 
   const [results, resultsD] = useState([]);
   const [leftCost, setleftCost] = useState(""); //使用可能金額
+  const [Data, setData] = useState(
+    [
+      {
+        index: 0,
+        name: 'おやつ',
+        value: 0,
+      },
+      {
+        index: 1,
+        name: '交際費',
+        value: 0,
+      },
+      {
+        index: 2,
+        name: 'ショッピング',
+        value: 0,
+      },
+      {
+        index: 3,
+        name: '外食',
+        value: 0,
+      },
+      {
+        index: 4,
+        name: '食材',
+        value: 0,
+      }
+    ]
+  );
   const addInfo =()=> {
     const hiduke=new Date(); 
     const month = hiduke.getMonth()+1;
@@ -207,8 +262,150 @@ function App() {
     const resultArray = [... results, resultArr];
     resultsD(resultArray)
     costD("")
-    resultArray.map((result) => {
-      settotalPayment(parseInt(totalPayment) + parseInt(result.cost))
+    resultArray.map((result, index) => {
+      result.cost = parseInt(result.cost)
+        if(result.category==="おやつ"){
+          setData([
+          {
+            index: 0,
+            name: 'おやつ',
+            value: Data[0].value+result.cost,
+          },
+          {
+            index: index,
+            name: "交際費",
+            value: Data[1].value,
+          },
+          {
+            index: index,
+            name: "ショッピング",
+            value: Data[2].value,
+          },
+          {
+            index: index,
+            name: "外食",
+            value: Data[3].value,
+          },
+          {
+            index: index,
+            name: "食材",
+            value: Data[4].value,
+          },
+        ]);
+        }else if(result.category==="交際費"){
+          setData([
+            {
+              index: 0,
+              name: 'おやつ',
+              value: Data[0].value,
+            },
+            {
+              index: index,
+              name: "交際費",
+              value: Data[1].value+result.cost,
+            },
+            {
+              index: index,
+              name: "ショッピング",
+              value: Data[2].value,
+            },
+            {
+              index: index,
+              name: "外食",
+              value: Data[3].value,
+            },
+            {
+              index: index,
+              name: "食材",
+              value: Data[4].value,
+            },
+          ]);
+        }else if(result.category==="ショッピング"){
+          setData([
+            {
+              index: 0,
+              name: 'おやつ',
+              value: Data[0].value,
+            },
+            {
+              index: index,
+              name: "交際費",
+              value: Data[1].value,
+            },
+            {
+              index: index,
+              name: "ショッピング",
+              value: Data[2].value+result.cost,
+            },
+            {
+              index: index,
+              name: "外食",
+              value: Data[3].value,
+            },
+            {
+              index: index,
+              name: "食材",
+              value: Data[4].value,
+            },
+          ]);
+        }else if(result.category==="外食"){
+          setData([
+            {
+              index: 0,
+              name: 'おやつ',
+              value: Data[0].value,
+            },
+            {
+              index: index,
+              name: "交際費",
+              value: Data[1].value,
+            },
+            {
+              index: index,
+              name: "ショッピング",
+              value: Data[2].value,
+            },
+            {
+              index: index,
+              name: "外食",
+              value: Data[3].value+result.cost,
+            },
+            {
+              index: index,
+              name: "食材",
+              value: Data[4].value,
+            },
+          ]);
+        }else if(result.category==="食材"){
+          setData([
+            {
+              index: 0,
+              name: 'おやつ',
+              value: Data[0].value,
+            },
+            {
+              index: index,
+              name: "交際費",
+              value: Data[1].value,
+            },
+            {
+              index: index,
+              name: "ショッピング",
+              value: Data[2].value,
+            },
+            {
+              index: index,
+              name: "外食",
+              value: Data[3].value,
+            },
+            {
+              index: index,
+              name: "食材",
+              value: Data[4].value+result.cost,
+            },
+          ]);
+        }
+      settotalPayment(parseInt(totalPayment) + result.cost)
       setleftCost(leftCost-result.cost);//使用可能金額の算出
     })
   }
