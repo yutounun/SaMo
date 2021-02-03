@@ -151,9 +151,6 @@ function App() {
           {result.credit}/{result.date}/{result.category}/¥{result.cost}
         </li>
       ))}
-      {/* <PieChart width={1370} height={400}>
-        <Pie data={Data} dataKey="value" cx="50%" cy="50%" outerRadius={100} fill="#82ca9d" label/>
-      </PieChart> */}
       <PieChart width={1370} height={400}>
         <Pie data={Data} dataKey="value" cx="50%" cy="50%" outerRadius={100} fill="#82ca9d" label={label}/>
       </PieChart>
@@ -176,7 +173,7 @@ function App() {
         <Text
           x={x}
           y={y}
-          dominantBaseline="hanging"
+          dominantBaseline="central"
           textAnchor={textAnchor}
           fill="#82ca9d"
         >
