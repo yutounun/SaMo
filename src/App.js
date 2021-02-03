@@ -20,7 +20,7 @@ import BarChartIcon from '@material-ui/icons/BarChart'; //チャート
 import HomeIcon from '@material-ui/icons/Home';//top
 import ExploreIcon from '@material-ui/icons/Explore';//目標入力
 import { BrowserRouter, Route, Link } from 'react-router-dom' // ルーティング
-import { PieChart, Pie, Text } from 'recharts' //チャート
+import { PieChart, Pie, Text, Cell } from 'recharts' //チャート
 
 const useStyles = makeStyles({
   list: {
@@ -145,14 +145,18 @@ function App() {
         </div>
         <div className="App-header">SaMo {goalLength}</div>
       </header>
-      <h2>グラフ</h2>
-      {results.map((result) => (
+      <h3>カテゴリ別利用金額</h3>
+      {/* {results.map((result) => (
         <li key={result.date} className="result">
           {result.credit}/{result.date}/{result.category}/¥{result.cost}
         </li>
-      ))}
+      ))} */}
       <PieChart width={1370} height={400}>
-        <Pie data={Data} dataKey="value" cx="50%" cy="50%" outerRadius={100} fill="#82ca9d" label={label}/>
+        <Pie data={Data} dataKey="value" cx="50%" cy="50%" outerRadius={150} fill="#82ca9d" label={label}>
+        {
+          Data.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
+        }
+        </Pie>
       </PieChart>
       <p>今週は合計で{totalPayment}円利用済みです</p>
     </div>
@@ -163,6 +167,7 @@ function App() {
     bottom: false,
     right: false,
   });
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', 'red'];
   const label = ({ name, value, cx, x, y }) => {
     const textAnchor = x > cx ? "start" : "end";
     return (
@@ -173,11 +178,11 @@ function App() {
         <Text
           x={x}
           y={y}
-          dominantBaseline="central"
+          dominantBaseline="hanging"
           textAnchor={textAnchor}
           fill="#82ca9d"
         >
-          {value}
+          {"¥"+value}
         </Text>
       </>
     );
