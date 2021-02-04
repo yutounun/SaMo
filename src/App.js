@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import ReactFlexyTable from "react-flexy-table" //テーブル
+import "react-flexy-table/dist/index.css" //テーブル
 import firebase from 'firebase'; // 追記
 import 'firebase/firestore'; // 追記
 import { makeStyles } from '@material-ui/core/styles';
@@ -163,10 +165,38 @@ function App() {
             {result.credit}/{result.date}/{result.category}/¥{result.cost}
           </li>
         ))}
+        <div className="App">
+          <div style={tableStyle}>
+            <Table />
+          </div>
+        </div>
         </div>
       </div>
     </div>
   )
+  const Table = () => {
+    const dataTable = [
+      { 日付: "2/3", カテゴリ: "お菓子", 利用金額: 1200 },
+      { 日付: "2/3", カテゴリ: "お菓子", 利用金額: 1200 },
+      { 日付: "2/3", カテゴリ: "お菓子", 利用金額: 1200 },
+      { 日付: "2/3", カテゴリ: "お菓子", 利用金額: 1200 },
+      { 日付: "2/3", カテゴリ: "お菓子", 利用金額: 1200 },
+      { 日付: "2/3", カテゴリ: "お菓子", 利用金額: 1200 },
+      { 日付: "2/3", カテゴリ: "お菓子", 利用金額: 1200 },
+      { 日付: "2/3", カテゴリ: "お菓子", 利用金額: 1200 },
+      { 日付: "2/3", カテゴリ: "お菓子", 利用金額: 1200 },
+    ];
+    return (    
+      <div>
+        <ReactFlexyTable data={dataTable} />   
+      </div>
+    );
+  }
+  const tableStyle = {
+    width: "100%",
+    margin: "0 auto",
+    marginTop: 150,
+  };
   const [state, setState] = React.useState({
     top: false,
     left: false,
