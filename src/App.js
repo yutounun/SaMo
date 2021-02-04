@@ -145,20 +145,26 @@ function App() {
         </div>
         <div className="App-header">SaMo {goalLength}</div>
       </header>
-      <h3>カテゴリ別利用金額</h3>
-      {/* {results.map((result) => (
-        <li key={result.date} className="result">
-          {result.credit}/{result.date}/{result.category}/¥{result.cost}
-        </li>
-      ))} */}
-      <PieChart width={1370} height={400}>
-        <Pie data={Data} dataKey="value" cx="50%" cy="50%" outerRadius={150} fill="#82ca9d" label={label}>
-        {
-          Data.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
-        }
-        </Pie>
-      </PieChart>
-      <p>今週は合計で{totalPayment}円利用済みです</p>
+      <div className="graphPage">
+        <div className="graph">
+          <h3>カテゴリ別利用金額</h3>
+          <PieChart width={700} height={400}>
+            <Pie data={Data} dataKey="value" cx="50%" cy="50%" outerRadius={150} fill="#82ca9d" label={label}>
+            {
+              Data.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
+            }
+            </Pie>
+          </PieChart>
+          <p>今週は合計で{totalPayment}円利用済みです</p>
+        </div>
+        <div className="table">
+          {results.map((result) => (
+          <li key={result.date} className="result">
+            {result.credit}/{result.date}/{result.category}/¥{result.cost}
+          </li>
+        ))}
+        </div>
+      </div>
     </div>
   )
   const [state, setState] = React.useState({
