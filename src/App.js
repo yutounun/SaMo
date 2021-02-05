@@ -86,7 +86,7 @@ function App() {
         </div>
         <div className="creditNcost">
           <Button size="medium" variant="contained" color="primary" disableElevation className="category creditCard"  onClick={()=>{
-              setCredit('クレカ')
+              setCredit(true)
           }}><CreditCardIcon/><span className="category_title">クレカ</span></Button>
           <span className="yen">¥</span>
           <input 
@@ -157,45 +157,24 @@ function App() {
             }
             </Pie>
           </PieChart>
-          <p>今週は合計で{totalPayment}円利用済みです</p>
+          <p>今週は合計¥{totalPayment}利用済み</p>
         </div>
         <div className="table">
-          {results.map((result) => (
-          <li key={result.date} className="result">
-            {result.credit}/{result.date}/{result.category}/¥{result.cost}
-          </li>
-        ))}
-        <div className="App">
-          <div style={tableStyle}>
-            <Table />
+          <h3>クレカ利用明細</h3>
+          <div className="App">
+            <div style={tableStyle}>
+              <ReactFlexyTable data={DataTable} />
+            </div>
+            <h4 className="displayCreditTotal">今週は合計¥{CreditTotal}利用済み</h4>
           </div>
-        </div>
         </div>
       </div>
     </div>
   )
-  const Table = () => {
-    const dataTable = [
-      { 日付: "2/3", カテゴリ: "お菓子", 利用金額: 1200 },
-      { 日付: "2/3", カテゴリ: "お菓子", 利用金額: 1200 },
-      { 日付: "2/3", カテゴリ: "お菓子", 利用金額: 1200 },
-      { 日付: "2/3", カテゴリ: "お菓子", 利用金額: 1200 },
-      { 日付: "2/3", カテゴリ: "お菓子", 利用金額: 1200 },
-      { 日付: "2/3", カテゴリ: "お菓子", 利用金額: 1200 },
-      { 日付: "2/3", カテゴリ: "お菓子", 利用金額: 1200 },
-      { 日付: "2/3", カテゴリ: "お菓子", 利用金額: 1200 },
-      { 日付: "2/3", カテゴリ: "お菓子", 利用金額: 1200 },
-    ];
-    return (    
-      <div>
-        <ReactFlexyTable data={dataTable} />   
-      </div>
-    );
-  }
   const tableStyle = {
     width: "100%",
     margin: "0 auto",
-    marginTop: 150,
+    marginTop: 70,
   };
   const [state, setState] = React.useState({
     top: false,
@@ -262,6 +241,10 @@ function App() {
   const [totalPayment, settotalPayment] = useState(0);
   const [cost,costD] = useState(""); 
   const [results, resultsD] = useState([]);
+  const [DataTable, setDataTable] = useState([
+    { 日付: "", カテゴリ: "", 利用金額: "" }
+  ]);
+  const [CreditTotal, setCreditTotal] = useState(0);
   const [leftCost, setleftCost] = useState(""); //使用可能金額
   const [Data, setData] = useState(
     [
@@ -302,6 +285,10 @@ function App() {
     costD("")
     resultArray.map((result, index) => {
       result.cost = parseInt(result.cost)
+      if(result.credit){
+        setDataTable(DataTable.concat({ 日付: result.date, カテゴリ: result.category, 利用金額: '¥' + result.cost },))
+        setCreditTotal(CreditTotal + result.cost)
+      }
         if(result.category==="おやつ"){
           setData([
           {

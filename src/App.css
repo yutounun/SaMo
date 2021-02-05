@@ -138,5 +138,10 @@ header {
   width: 50%;
 }
 .table {
-  margin: 0px 50px 0 0 ;
+  margin-right: 20px;
+}
+.displayCreditTotal {
+  position: absolute;
+  bottom: 110px;
+  right: 260px;
 }
