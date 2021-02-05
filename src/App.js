@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import ReactFlexyTable from "react-flexy-table" //テーブル
+import "react-flexy-table/dist/index.css" //テーブル
 import firebase from 'firebase'; // 追記
 import 'firebase/firestore'; // 追記
 import { makeStyles } from '@material-ui/core/styles';
@@ -84,7 +86,7 @@ function App() {
         </div>
         <div className="creditNcost">
           <Button size="medium" variant="contained" color="primary" disableElevation className="category creditCard"  onClick={()=>{
-              setCredit('クレカ')
+              setCredit(true)
           }}><CreditCardIcon/><span className="category_title">クレカ</span></Button>
           <span className="yen">¥</span>
           <input 
@@ -145,22 +147,35 @@ function App() {
         </div>
         <div className="App-header">SaMo {goalLength}</div>
       </header>
-      <h3>カテゴリ別利用金額</h3>
-      {/* {results.map((result) => (
-        <li key={result.date} className="result">
-          {result.credit}/{result.date}/{result.category}/¥{result.cost}
-        </li>
-      ))} */}
-      <PieChart width={1370} height={400}>
-        <Pie data={Data} dataKey="value" cx="50%" cy="50%" outerRadius={150} fill="#82ca9d" label={label}>
-        {
-          Data.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
-        }
-        </Pie>
-      </PieChart>
-      <p>今週は合計で{totalPayment}円利用済みです</p>
+      <div className="graphPage">
+        <div className="graph">
+          <h3>カテゴリ別利用金額</h3>
+          <PieChart width={700} height={400}>
+            <Pie data={Data} dataKey="value" cx="50%" cy="50%" outerRadius={150} fill="#82ca9d" label={label}>
+            {
+              Data.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
+            }
+            </Pie>
+          </PieChart>
+          <p>今週は合計¥{totalPayment}利用済み</p>
+        </div>
+        <div className="table">
+          <h3>クレカ利用明細</h3>
+          <div className="App">
+            <div style={tableStyle}>
+              <ReactFlexyTable data={DataTable} />
+            </div>
+            <h4 className="displayCreditTotal">今週は合計¥{CreditTotal}利用済み</h4>
+          </div>
+        </div>
+      </div>
     </div>
   )
+  const tableStyle = {
+    width: "100%",
+    margin: "0 auto",
+    marginTop: 70,
+  };
   const [state, setState] = React.useState({
     top: false,
     left: false,
@@ -226,6 +241,10 @@ function App() {
   const [totalPayment, settotalPayment] = useState(0);
   const [cost,costD] = useState(""); 
   const [results, resultsD] = useState([]);
+  const [DataTable, setDataTable] = useState([
+    { 日付: "", カテゴリ: "", 利用金額: "" }
+  ]);
+  const [CreditTotal, setCreditTotal] = useState(0);
   const [leftCost, setleftCost] = useState(""); //使用可能金額
   const [Data, setData] = useState(
     [
@@ -266,6 +285,10 @@ function App() {
     costD("")
     resultArray.map((result, index) => {
       result.cost = parseInt(result.cost)
+      if(result.credit){
+        setDataTable(DataTable.concat({ 日付: result.date, カテゴリ: result.category, 利用金額: '¥' + result.cost },))
+        setCreditTotal(CreditTotal + result.cost)
+      }
         if(result.category==="おやつ"){
           setData([
           {

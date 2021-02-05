@@ -10512,6 +10512,11 @@ react-event-listener@^0.5.1:
     prop-types "^15.6.0"
     warning "^3.0.0"
 
+react-flexy-table@^1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/react-flexy-table/-/react-flexy-table-1.7.0.tgz#895a8fbded233817fddd30b708f09500308b0c60"
+  integrity sha512-/mGc1SXp2VVuuHhQyxiFbe7YBzZg7KiK11Q0cCdSA0Ig9eSHCzfYJnN0vivbfZEo4yQfiP1LITOM4fmSEguR9A==
+
 react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
