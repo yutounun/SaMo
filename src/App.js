@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import ReactFlexyTable from "react-flexy-table" //テーブル
 import "react-flexy-table/dist/index.css" //テーブル
-import firebase from 'firebase'; // 追記
-import 'firebase/firestore'; // 追記
+import firebase from 'firebase/app'
+import 'firebase/app'
+import 'firebase/firestore' // ここには使用するFirebaseSDKモジュールを記載
 import { makeStyles } from '@material-ui/core/styles';
 import './App.css';
 import { Button } from '@material-ui/core';
@@ -46,13 +47,12 @@ const firebaseConfig = {
 if (firebase.apps.length === 0) {
   firebase.initializeApp(firebaseConfig);
 }
-firebase.analytics();
 
 function App() {
   const Home = () => (
     <div>
       <header>
-        <div class="openSidebar">
+        <div className="openSidebar">
           {['三'].map((anchor) => (
             <React.Fragment key={anchor}>
               <Button onClick={toggleDrawer(anchor, true)}>{anchor}</Button>
@@ -62,7 +62,7 @@ function App() {
             </React.Fragment>
           ))}
         </div>
-        <div className="App-header">SaMo {goalLength}</div>
+        <div className="App-header">SaMo</div>
       </header>
       <div className="middle">
               <div className="categories">
@@ -100,14 +100,14 @@ function App() {
           />
           <Button variant="contained" size="large" disableElevation className="inputCost" onClick={() => addInfo()}>送信</Button>
         </div>
-        <p class="leftMoney">今週は残り<span className="leftCost">¥{leftCost}</span>使えるよ！</p>
+        <p className="leftMoney">今週は残り<span className="leftCost">¥{leftCost}</span>使えるよ！</p>
       </div>
     </div>
   )
   const Goal = () => (
     <div>
       <header>
-        <div class="openSidebar">
+        <div className="openSidebar">
           {['三'].map((anchor) => (
             <React.Fragment key={anchor}>
               <Button onClick={toggleDrawer(anchor, true)}>{anchor}</Button>
@@ -117,7 +117,7 @@ function App() {
             </React.Fragment>
           ))}
         </div>
-        <div className="App-header">SaMo {goalLength}</div>
+        <div className="App-header">SaMo</div>
       </header>
       <h2>目標</h2>
       <input 
@@ -135,7 +135,7 @@ function App() {
   const Graph = () => (
     <div>
       <header>
-        <div class="openSidebar">
+        <div className="openSidebar">
           {['三'].map((anchor) => (
             <React.Fragment key={anchor}>
               <Button onClick={toggleDrawer(anchor, true)}>{anchor}</Button>
@@ -145,7 +145,7 @@ function App() {
             </React.Fragment>
           ))}
         </div>
-        <div className="App-header">SaMo {goalLength}</div>
+        <div className="App-header">SaMo</div>
       </header>
       <div className="graphPage">
         <div className="graph">
@@ -235,12 +235,11 @@ function App() {
     </div>
   );
   const classes = useStyles();
-  const [goalLength, setGoalLength] = useState("");
   const [credit,setCredit] = useState(false);
   const [category,categoryD] = useState("");
   const [totalPayment, settotalPayment] = useState(0);
   const [cost,costD] = useState(""); 
-  const [results, resultsD] = useState([]);
+  const [results, resultsD] = useState([]);Z
   const [DataTable, setDataTable] = useState([
     { 日付: "", カテゴリ: "", 利用金額: "" }
   ]);
@@ -280,7 +279,7 @@ function App() {
     const month = hiduke.getMonth()+1;
     const day = hiduke.getDate();
     const resultArr = {credit: credit, category: category, date: month+ '.' + day, cost:cost}
-    const resultArray = [... results, resultArr];
+    const resultArray = [... results, resultArr]
     resultsD(resultArray)
     costD("")
     resultArray.map((result, index) => {
