@@ -50,6 +50,7 @@ if (firebase.apps.length === 0) {
 
 function App() {
   const inputCost = React.useRef()
+  const LeftCost = React.useRef()
   const Home = () => (
     <div>
       <header>
@@ -118,16 +119,14 @@ function App() {
         <div className="App-header">SaMo</div>
       </header>
       <h2>目標</h2>
+      <span className="yen">¥</span>
       <input 
         type="text" 
         className="inputCost"
-        value = {leftCost}
         placeholder="金額"
-        onChange={(e) => {
-          setleftCost(e.target.value);
-        }}
+        ref={LeftCost}
       />
-      <Button variant="contained" size="large" disableElevation className="inputCost">送信</Button>
+      <Button variant="contained" size="large" disableElevation className="inputCost" onClick={ addLeftCost }>送信</Button>
     </div>
   )
   const Graph = () => (
@@ -271,6 +270,9 @@ function App() {
       }
     ]
   );
+  const addLeftCost =()=> {
+    setleftCost(LeftCost.current.value)
+  }
   const addInfo =()=> {
     const hiduke=new Date(); 
     const month = hiduke.getMonth()+1;
