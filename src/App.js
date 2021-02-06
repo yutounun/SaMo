@@ -49,6 +49,7 @@ if (firebase.apps.length === 0) {
 }
 
 function App() {
+  const inputCost = React.useRef()
   const Home = () => (
     <div>
       <header>
@@ -89,16 +90,21 @@ function App() {
               setCredit(true)
           }}><CreditCardIcon/><span className="category_title">クレカ</span></Button>
           <span className="yen">¥</span>
-          <input 
+          {/* <input 
             type="text" 
             className="inputCost"
             value = {cost}
             placeholder="金額"
             onChange={(e) => {
               costD(e.target.value);
-            }}
-          />
-          <Button variant="contained" size="large" disableElevation className="inputCost" onClick={() => addInfo()}>送信</Button>
+            }}/> */}
+            <input 
+              type="text" 
+              className="inputCost"
+              placeholder="金額"
+              ref={inputCost}
+            />
+          <Button variant="contained" size="large" disableElevation className="inputCost" onClick={addInfo}>送信</Button>
         </div>
         <p className="leftMoney">今週は残り<span className="leftCost">¥{leftCost}</span>使えるよ！</p>
       </div>
@@ -238,8 +244,8 @@ function App() {
   const [credit,setCredit] = useState(false);
   const [category,categoryD] = useState("");
   const [totalPayment, settotalPayment] = useState(0);
-  const [cost,costD] = useState(""); 
-  const [results, resultsD] = useState([]);Z
+  // const [cost,costD] = useState(""); 
+  const [results, resultsD] = useState([]);
   const [DataTable, setDataTable] = useState([
     { 日付: "", カテゴリ: "", 利用金額: "" }
   ]);
@@ -274,14 +280,16 @@ function App() {
       }
     ]
   );
+  
   const addInfo =()=> {
+    // console.log(inputCost.current.value)
     const hiduke=new Date(); 
     const month = hiduke.getMonth()+1;
     const day = hiduke.getDate();
-    const resultArr = {credit: credit, category: category, date: month+ '.' + day, cost:cost}
+    const resultArr = {credit: credit, category: category, date: month+ '.' + day, cost:inputCost.current.value}
     const resultArray = [... results, resultArr]
     resultsD(resultArray)
-    costD("")
+    // costD("")
     resultArray.map((result, index) => {
       result.cost = parseInt(result.cost)
       if(result.credit){
@@ -435,7 +443,7 @@ function App() {
   }
   const db = firebase.firestore();
   useEffect(() => {
-    (async () => {
+    (async () => {  
       const getFB = await db.collection("SaMo").doc("SaMoResults").get();
       resultsD(getFB.data().results);
     })()
