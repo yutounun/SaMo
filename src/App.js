@@ -90,14 +90,6 @@ function App() {
               setCredit(true)
           }}><CreditCardIcon/><span className="category_title">クレカ</span></Button>
           <span className="yen">¥</span>
-          {/* <input 
-            type="text" 
-            className="inputCost"
-            value = {cost}
-            placeholder="金額"
-            onChange={(e) => {
-              costD(e.target.value);
-            }}/> */}
             <input 
               type="text" 
               className="inputCost"
@@ -244,7 +236,6 @@ function App() {
   const [credit,setCredit] = useState(false);
   const [category,categoryD] = useState("");
   const [totalPayment, settotalPayment] = useState(0);
-  // const [cost,costD] = useState(""); 
   const [results, resultsD] = useState([]);
   const [DataTable, setDataTable] = useState([
     { 日付: "", カテゴリ: "", 利用金額: "" }
@@ -280,16 +271,13 @@ function App() {
       }
     ]
   );
-  
   const addInfo =()=> {
-    // console.log(inputCost.current.value)
     const hiduke=new Date(); 
     const month = hiduke.getMonth()+1;
     const day = hiduke.getDate();
     const resultArr = {credit: credit, category: category, date: month+ '.' + day, cost:inputCost.current.value}
     const resultArray = [... results, resultArr]
     resultsD(resultArray)
-    // costD("")
     resultArray.map((result, index) => {
       result.cost = parseInt(result.cost)
       if(result.credit){
