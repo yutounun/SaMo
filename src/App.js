@@ -34,6 +34,7 @@ const useStyles = makeStyles({
   },
 });
 
+//firebase設定
 const firebaseConfig = {
   apiKey: "AIzaSyDor3C9MPpYQwZPJgqD-gkOTk7DaA3OHgU",
   authDomain: "samo-c765d.firebaseapp.com",
@@ -49,8 +50,32 @@ if (firebase.apps.length === 0) {
 }
 
 function App() {
-  const inputCost = React.useRef()
-  const LeftCost = React.useRef()
+    // useStatesの変数一覧
+    const inputCost = React.useRef()  //input連続入力機能
+    const LeftCost = React.useRef()  //input連続入力機能
+    const classes = useStyles();
+    const db = firebase.firestore();
+    const [credit,setCredit] = useState(false); //クレカ利用選択ならtrue
+    const [category,categoryD] = useState("");// 選択済みカテゴリ
+    const [totalPayment, settotalPayment] = useState(0);// 今月支払い合計
+    const [results, resultsD] = useState([]);// 入力結果
+    const [Local, setLocal] = useState([]);
+    const [DataTable, setDataTable] = useState([
+      { 日付: "", カテゴリ: "", 利用金額: "" }
+    ]);
+    const [CreditTotal, setCreditTotal] = useState(0);
+    const [leftCost, setleftCost] = useState(""); //使用可能金額
+    const [Data, setData] = useState(// グラフデータ初期値
+      [
+        {index: 0, name: 'おやつ', value: 0,},
+        {index: 1, name: '交際費', value: 0,},
+        {index: 2, name: 'ショッピング', value: 0,},
+        {index: 3, name: '外食', value: 0,},
+        {index: 4, name: '食材', value: 0,}
+      ]
+    );
+
+  //TOP page
   const Home = () => (
     <div>
       <header>
@@ -88,7 +113,7 @@ function App() {
         </div>
         <div className="creditNcost">
           <Button size="medium" variant="contained" color="primary" disableElevation className="category creditCard"  onClick={()=>{
-              setCredit(true)
+            setCredit(true)
           }}><CreditCardIcon/><span className="category_title">クレカ</span></Button>
           <span className="yen">¥</span>
             <input 
@@ -103,6 +128,8 @@ function App() {
       </div>
     </div>
   )
+
+  //目標ページ
   const Goal = () => (
     <div>
       <header>
@@ -126,9 +153,11 @@ function App() {
         placeholder="金額"
         ref={LeftCost}
       />
-      <Button variant="contained" size="large" disableElevation className="inputCost" onClick={ addLeftCost }>送信</Button>
+      <Button variant="contained" size="large" disableElevation className="inputCost" onClick={ setleftCost(LeftCost.current.value) }>送信</Button>
     </div>
   )
+
+  //レポートページ
   const Graph = () => (
     <div>
       <header>
@@ -168,6 +197,8 @@ function App() {
       </div>
     </div>
   )
+
+  //table機能
   const tableStyle = {
     width: "100%",
     margin: "0 auto",
@@ -231,219 +262,92 @@ function App() {
       </List>
     </div>
   );
-  const classes = useStyles();
-  const [credit,setCredit] = useState(false);
-  const [category,categoryD] = useState("");
-  const [totalPayment, settotalPayment] = useState(0);
-  const [results, resultsD] = useState([]);
-  const [DataTable, setDataTable] = useState([
-    { 日付: "", カテゴリ: "", 利用金額: "" }
-  ]);
-  const [CreditTotal, setCreditTotal] = useState(0);
-  const [leftCost, setleftCost] = useState(""); //使用可能金額
-  const [Data, setData] = useState(
-    [
-      {
-        index: 0,
-        name: 'おやつ',
-        value: 0,
-      },
-      {
-        index: 1,
-        name: '交際費',
-        value: 0,
-      },
-      {
-        index: 2,
-        name: 'ショッピング',
-        value: 0,
-      },
-      {
-        index: 3,
-        name: '外食',
-        value: 0,
-      },
-      {
-        index: 4,
-        name: '食材',
-        value: 0,
-      }
-    ]
-  );
-  const addLeftCost =()=> {
-    setleftCost(LeftCost.current.value)
+
+  //ローカルストレージ機能関数
+  const readLocal=()=>{
+    for(let i=0; i<localStorage.length; i++){
+      const a=JSON.parse((localStorage.getItem(i)))
+      console.log(a)
+      setDataTable(DataTable.concat({ 日付: a.date, カテゴリ: a.category, 利用金額: '¥' + a.cost },))
+      console.log(DataTable)
+    }
   }
+
+  // 追加情報選択後送信
   const addInfo =()=> {
+    // readLocal()
+    setCredit(false) // 送信時にfalseにすることでtrueのみテーブルに乗るときのバグを防ぐ
+    //本日の日付取得獲得
     const hiduke=new Date(); 
     const month = hiduke.getMonth()+1;
     const day = hiduke.getDate();
     const resultArr = {credit: credit, category: category, date: month+ '.' + day, cost:inputCost.current.value}
     const resultArray = [... results, resultArr]
     resultsD(resultArray)
+    // console.log(resultArray)
     resultArray.map((result, index) => {
       result.cost = parseInt(result.cost)
-      if(result.credit){
+      localStorage.setItem(index,JSON.stringify(result)); //localStorageにTOPの入力内容追加
+      // console.log(result)
+      if(result.credit){// trueのみテーブルに乗るときのバグを防ぐ
         setDataTable(DataTable.concat({ 日付: result.date, カテゴリ: result.category, 利用金額: '¥' + result.cost },))
         setCreditTotal(CreditTotal + result.cost)
       }
-        if(result.category==="おやつ"){
-          setData([
-          {
-            index: 0,
-            name: 'おやつ',
-            value: Data[0].value+result.cost,
-          },
-          {
-            index: index,
-            name: "交際費",
-            value: Data[1].value,
-          },
-          {
-            index: index,
-            name: "ショッピング",
-            value: Data[2].value,
-          },
-          {
-            index: index,
-            name: "外食",
-            value: Data[3].value,
-          },
-          {
-            index: index,
-            name: "食材",
-            value: Data[4].value,
+      //各選択されたカテゴリ以外はデータをそのままに、選択のもののみデータを追加してグラフに反映させる
+      if(result.category==="おやつ"){
+        setData([
+          {index: 0,name: 'おやつ',value: Data[0].value+result.cost,},
+          {index: index,name: "交際費",value: Data[1].value,},
+          {index: index,name: "ショッピング",value: Data[2].value,},
+          {index: index,name: "外食",value: Data[3].value,},
+          {index: index,name: "食材",value: Data[4].value,},
+      ]);
+      }else if(result.category==="交際費"){
+        setData([
+            {index: 0,name: 'おやつ',value: Data[0].value,},
+            {index: index,name: "交際費",value: Data[1].value+result.cost,},
+            {index: index,name: "ショッピング",value: Data[2].value,},
+            {index: index,name: "外食",value: Data[3].value,},
+            {index: index,name: "食材",value: Data[4].value,
           },
         ]);
-        }else if(result.category==="交際費"){
-          setData([
-            {
-              index: 0,
-              name: 'おやつ',
-              value: Data[0].value,
-            },
-            {
-              index: index,
-              name: "交際費",
-              value: Data[1].value+result.cost,
-            },
-            {
-              index: index,
-              name: "ショッピング",
-              value: Data[2].value,
-            },
-            {
-              index: index,
-              name: "外食",
-              value: Data[3].value,
-            },
-            {
-              index: index,
-              name: "食材",
-              value: Data[4].value,
-            },
-          ]);
-        }else if(result.category==="ショッピング"){
-          setData([
-            {
-              index: 0,
-              name: 'おやつ',
-              value: Data[0].value,
-            },
-            {
-              index: index,
-              name: "交際費",
-              value: Data[1].value,
-            },
-            {
-              index: index,
-              name: "ショッピング",
-              value: Data[2].value+result.cost,
-            },
-            {
-              index: index,
-              name: "外食",
-              value: Data[3].value,
-            },
-            {
-              index: index,
-              name: "食材",
-              value: Data[4].value,
-            },
-          ]);
-        }else if(result.category==="外食"){
-          setData([
-            {
-              index: 0,
-              name: 'おやつ',
-              value: Data[0].value,
-            },
-            {
-              index: index,
-              name: "交際費",
-              value: Data[1].value,
-            },
-            {
-              index: index,
-              name: "ショッピング",
-              value: Data[2].value,
-            },
-            {
-              index: index,
-              name: "外食",
-              value: Data[3].value+result.cost,
-            },
-            {
-              index: index,
-              name: "食材",
-              value: Data[4].value,
-            },
-          ]);
-        }else if(result.category==="食材"){
-          setData([
-            {
-              index: 0,
-              name: 'おやつ',
-              value: Data[0].value,
-            },
-            {
-              index: index,
-              name: "交際費",
-              value: Data[1].value,
-            },
-            {
-              index: index,
-              name: "ショッピング",
-              value: Data[2].value,
-            },
-            {
-              index: index,
-              name: "外食",
-              value: Data[3].value,
-            },
-            {
-              index: index,
-              name: "食材",
-              value: Data[4].value+result.cost,
-            },
-          ]);
-        }
+      }else if(result.category==="ショッピング"){
+        setData([
+          {index: 0,name: 'おやつ',value: Data[0].value,},
+          {index: index,name: "交際費",value: Data[1].value,},
+          {index: index,name: "ショッピング",value: Data[2].value+result.cost,
+          },
+          {index: index,name: "外食",value: Data[3].value,},
+          {index: index,name: "食材",value: Data[4].value,},
+        ]);
+      }else if(result.category==="外食"){
+        setData([
+          {index: 0,name: 'おやつ',value: Data[0].value,},
+          {index: index,name: "交際費",value: Data[1].value,},
+          {index: index,name: "ショッピング",value: Data[2].value,},
+          {index: index,name: "外食",value: Data[3].value+result.cost,},
+          {index: index,name: "食材",value: Data[4].value,},
+        ]);
+      }else if(result.category==="食材"){
+        setData([
+          {index: 0,name: 'おやつ',value: Data[0].value,},
+          {index: index,name: "交際費",value: Data[1].value,},
+          {index: index,name: "ショッピング",value: Data[2].value,},
+          {index: index,name: "外食",value: Data[3].value,},
+          {index: index,name: "食材",value: Data[4].value+result.cost,},
+        ]);
+      }
       settotalPayment(parseInt(totalPayment) + result.cost)
       setleftCost(leftCost-result.cost);//使用可能金額の算出
     })
   }
-  const db = firebase.firestore();
-  useEffect(() => {
-    (async () => {  
-      const getFB = await db.collection("SaMo").doc("SaMoResults").get();
-      resultsD(getFB.data().results);
-    })()
-  }, [db])
-  useEffect(() => {
-    (async () => {
-      const docRef = await db.collection('SaMo').doc('SaMoResults');
-      docRef.update({ results: results })
-    })()
-  }, [results, db])
+
+  //第二引数指定でDOM描画時のみ関数実行
+  // useEffect(() => {
+  //   console.log(localStorage)
+  // }, []);
+
+  //ここで全ての内容をDOM表示
   return (
     <div className="App">
       <BrowserRouter>
