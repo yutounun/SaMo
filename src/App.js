@@ -265,12 +265,15 @@ function App() {
 
   //ローカルストレージ機能関数
   const readLocal=()=>{
-    for(let i=0; i<localStorage.length; i++){
-      const a=JSON.parse((localStorage.getItem(i)))
-      console.log(a)
-      setDataTable(DataTable.concat({ 日付: a.date, カテゴリ: a.category, 利用金額: '¥' + a.cost },))
-      console.log(DataTable)
+    const localAll = JSON.parse(localStorage.getItem('info'))
+    const localTable = []
+    if(localAll){
+      localAll.map((local)=>{
+        localTable.push({ 日付: local.date, カテゴリ: local.category, 利用金額: '¥' + local.cost })
+      })
     }
+    resultsD(results.concat(localTable))
+    setDataTable(DataTable.concat(localTable))
   }
 
   // 追加情報選択後送信
@@ -283,12 +286,10 @@ function App() {
     const day = hiduke.getDate();
     const resultArr = {credit: credit, category: category, date: month+ '.' + day, cost:inputCost.current.value}
     const resultArray = [... results, resultArr]
-    resultsD(resultArray)
-    // console.log(resultArray)
+    localStorage.setItem('info',JSON.stringify(resultArray));
+    resultsD(resultArray) //この時まだresultsにsetされていないのはあるあるだからresultArrayを使うのが適切。
     resultArray.map((result, index) => {
       result.cost = parseInt(result.cost)
-      localStorage.setItem(index,JSON.stringify(result)); //localStorageにTOPの入力内容追加
-      // console.log(result)
       if(result.credit){// trueのみテーブルに乗るときのバグを防ぐ
         setDataTable(DataTable.concat({ 日付: result.date, カテゴリ: result.category, 利用金額: '¥' + result.cost },))
         setCreditTotal(CreditTotal + result.cost)
@@ -343,9 +344,11 @@ function App() {
   }
 
   //第二引数指定でDOM描画時のみ関数実行
-  // useEffect(() => {
-  //   console.log(localStorage)
-  // }, []);
+  useEffect(() => {
+    readLocal()
+  }, []);
+
+
 
   //ここで全ての内容をDOM表示
   return (
