@@ -275,7 +275,6 @@ function App() {
     const localAll = JSON.parse(localStorage.getItem('info'))
     const localTable = []
     let localTotalSpent = null;
-    console.log(localAll)
     if(localAll){
       localAll.map((local)=>{
         local.cost = parseInt(local.cost) //コストをintに
@@ -286,7 +285,6 @@ function App() {
         if(local.category==="おやつ"){
           const changedState = {...Data};
           changedState[0].value = Data[0].value+local.cost;
-          setData(changedState);
         }else if(local.category==="交際費"){
           const changedState = {...Data};
           console.log(changedState[1].value)
@@ -399,10 +397,6 @@ function App() {
     
     resultArray.map((result, index) => {
       result.cost = parseInt(result.cost)
-      // if(result.credit){// trueのみテーブルに乗るときのバグを防ぐ
-      //   setDataTable(DataTable.concat({ 日付: result.date, カテゴリ: result.category, 利用金額: '¥' + result.cost },))
-      //   setCreditTotal(CreditTotal + result.cost)
-      // }
       //各選択されたカテゴリ以外はデータをそのままに、選択のもののみデータを追加してグラフに反映させる
       if(result.category==="おやつ"){
         setData([
@@ -447,11 +441,6 @@ function App() {
           {index: index,name: "食材",value: Data[4].value+result.cost,},
         ]);
       }
-
-      // settotalPayment(parseInt(totalPayment) + parseInt(result.cost))
-      // setleftCost(leftCost-result.cost);//使用可能金額の算出
-      // const allLeft = leftCost-result.cost-totalPayment
-      // localStorage.setItem('leftCost',allLeft);
     })
   }
 
