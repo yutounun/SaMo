@@ -279,12 +279,21 @@ function App() {
       localAll.map((local)=>{
         local.cost = parseInt(local.cost)
         localTotalSpent = localTotalSpent + local.cost
-        localTable.push({ 日付: local.date, カテゴリ: local.category, 利用金額: '¥' + local.cost })
+        if(local.credit){
+          localTable.push({ 日付: local.date, カテゴリ: local.category, 利用金額: '¥' + local.cost })
+        }
       })
     }
     settotalPayment(localTotalSpent)
     resultsD(results.concat(localTable))
     setDataTable(DataTable.concat(localTable))
+  }
+
+  //入力情報詳細をlocalStorageに保存
+  const setLocalInfo=(resultArray)=>{
+    if(resultArray){
+      localStorage.setItem('info',JSON.stringify(resultArray));
+    }
   }
 
   // 追加情報選択後送信
@@ -297,9 +306,7 @@ function App() {
     const day = hiduke.getDate();
     const resultArr = {credit: credit, category: category, date: month+ '.' + day, cost:parseInt(inputCost.current.value)}
     const resultArray = [... results, resultArr]
-    if(resultArray){
-      localStorage.setItem('info',JSON.stringify(resultArray));
-    }
+    setLocalInfo(resultArray)
     resultsD(resultArray) //この時まだresultsにsetされていないのはあるあるだからresultArrayを使うのが適切。
     resultArray.map((result, index) => {
       result.cost = parseInt(result.cost)
