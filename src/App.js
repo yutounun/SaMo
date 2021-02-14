@@ -54,12 +54,10 @@ function App() {
     const inputCost = React.useRef()  //input連続入力機能
     const LeftCost = React.useRef()  //input連続入力機能
     const classes = useStyles();
-    const db = firebase.firestore();
     const [credit,setCredit] = useState(false); //クレカ利用選択ならtrue
     const [category,categoryD] = useState("");// 選択済みカテゴリ
-    const [totalPayment, settotalPayment] = useState(0);// 今月支払い合計
+    const [totalPayment, settotalPayment] = useState();// 今月支払い合計
     const [results, resultsD] = useState([]);// 入力結果
-    const [Local, setLocal] = useState([]);
     const [DataTable, setDataTable] = useState([
       { 日付: "", カテゴリ: "", 利用金額: "" }
     ]);
@@ -153,7 +151,7 @@ function App() {
         placeholder="金額"
         ref={LeftCost}
       />
-      <Button variant="contained" size="large" disableElevation className="inputCost" onClick={ setleftCost(LeftCost.current.value) }>送信</Button>
+      <Button variant="contained" size="large" disableElevation className="inputCost" onClick={ setGoal }>送信</Button>
     </div>
   )
 
@@ -262,16 +260,29 @@ function App() {
       </List>
     </div>
   );
+  
+  //目標金額の入力値を残高にセット
+  const setGoal=()=>{
+    setleftCost(LeftCost.current.value)
+    const currentLeftCost = LeftCost.current.value //そのままではsetできてないから変数に入れてからlocalStorageにいれる
+    localStorage.setItem('leftCost',currentLeftCost);
+  }
 
   //ローカルストレージ機能関数
   const readLocal=()=>{
+    const localLeftCost = JSON.parse(localStorage.getItem('leftCost'))
+    setleftCost(localLeftCost)
     const localAll = JSON.parse(localStorage.getItem('info'))
     const localTable = []
+    let localTotalSpent = null;
     if(localAll){
       localAll.map((local)=>{
+        local.cost = parseInt(local.cost)
+        localTotalSpent = localTotalSpent + local.cost
         localTable.push({ 日付: local.date, カテゴリ: local.category, 利用金額: '¥' + local.cost })
       })
     }
+    settotalPayment(localTotalSpent)
     resultsD(results.concat(localTable))
     setDataTable(DataTable.concat(localTable))
   }
@@ -284,9 +295,11 @@ function App() {
     const hiduke=new Date(); 
     const month = hiduke.getMonth()+1;
     const day = hiduke.getDate();
-    const resultArr = {credit: credit, category: category, date: month+ '.' + day, cost:inputCost.current.value}
+    const resultArr = {credit: credit, category: category, date: month+ '.' + day, cost:parseInt(inputCost.current.value)}
     const resultArray = [... results, resultArr]
-    localStorage.setItem('info',JSON.stringify(resultArray));
+    if(resultArray){
+      localStorage.setItem('info',JSON.stringify(resultArray));
+    }
     resultsD(resultArray) //この時まだresultsにsetされていないのはあるあるだからresultArrayを使うのが適切。
     resultArray.map((result, index) => {
       result.cost = parseInt(result.cost)
@@ -338,8 +351,8 @@ function App() {
           {index: index,name: "食材",value: Data[4].value+result.cost,},
         ]);
       }
-      settotalPayment(parseInt(totalPayment) + result.cost)
-      setleftCost(leftCost-result.cost);//使用可能金額の算出
+      settotalPayment(parseInt(totalPayment) + parseInt(result.cost))
+      setleftCost(leftCost-result.cost-totalPayment);//使用可能金額の算出
     })
   }
 
