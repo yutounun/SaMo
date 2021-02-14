@@ -275,13 +275,82 @@ function App() {
     const localAll = JSON.parse(localStorage.getItem('info'))
     const localTable = []
     let localTotalSpent = null;
+    console.log(localAll)
     if(localAll){
       localAll.map((local)=>{
-        local.cost = parseInt(local.cost)
+        local.cost = parseInt(local.cost) //コストをintに
         localTotalSpent = localTotalSpent + local.cost
         if(local.credit){
           localTable.push({ 日付: local.date, カテゴリ: local.category, 利用金額: '¥' + local.cost })
         }
+        if(local.category==="おやつ"){
+          const changedState = {...Data};
+          changedState[0].value = Data[0].value+local.cost;
+          setData(changedState);
+        }else if(local.category==="交際費"){
+          const changedState = {...Data};
+          console.log(changedState[1].value)
+          console.log(Data[1].value+local.cost)
+          changedState[1].value = Data[1].value+local.cost;
+          setData(changedState);
+          console.log(changedState)
+        }else if(local.category==="ショッピング"){
+          const changedState = {...Data};
+          changedState[2].value = Data[2].value+local.cost;
+          setData(changedState);
+        }else if(local.category==="外食"){
+          const changedState = {...Data};
+          changedState[3].value = Data[3].value+local.cost;
+          setData(changedState);
+        }else if(local.category==="食材"){
+          const changedState = {...Data};
+          changedState[4].value = Data[4].value+local.cost;
+          setData(changedState);
+        }
+        // if(local.category==="おやつ"){
+        //   setData([
+        //     {index: 0,name: 'おやつ',value: Data[0].value+local.cost,},
+        //     {index: 1,name: "交際費",value: Data[1].value,},
+        //     {index: 2,name: "ショッピング",value: Data[2].value,},
+        //     {index: 3,name: "外食",value: Data[3].value,},
+        //     {index: 4,name: "食材",value: Data[4].value,},
+        // ]);
+        // }else if(local.category==="交際費"){
+        //   setData([
+        //       {index: 0,name: 'おやつ',value: Data[0].value,},
+        //       {index: 1,name: "交際費",value: Data[1].value+local.cost,},
+        //       {index: 2,name: "ショッピング",value: Data[2].value,},
+        //       {index: 3,name: "外食",value: Data[3].value,},
+        //       {index: 4,name: "食材",value: Data[4].value,
+        //     },
+        //   ]);
+        // }else if(local.category==="ショッピング"){
+        //   console.log(Data)
+        //   setData([
+        //     {index: 0,name: 'おやつ',value: Data[0].value,},
+        //     {index: 1,name: "交際費",value: Data[1].value,},
+        //     {index: 2,name: "ショッピング",value: Data[2].value+local.cost,
+        //     },
+        //     {index: 3,name: "外食",value: Data[3].value,},
+        //     {index: 4,name: "食材",value: Data[4].value,},
+        //   ]);
+        // }else if(local.category==="外食"){
+        //   setData([
+        //     {index: 0,name: 'おやつ',value: Data[0].value,},
+        //     {index: 1,name: "交際費",value: Data[1].value,},
+        //     {index: 2,name: "ショッピング",value: Data[2].value,},
+        //     {index: 3,name: "外食",value: Data[3].value+local.cost,},
+        //     {index: 4,name: "食材",value: Data[4].value,},
+        //   ]);
+        // }else if(local.category==="食材"){
+        //   setData([
+        //     {index: 0,name: 'おやつ',value: Data[0].value,},
+        //     {index: 1,name: "交際費",value: Data[1].value,},
+        //     {index: 2,name: "ショッピング",value: Data[2].value,},
+        //     {index: 3,name: "外食",value: Data[3].value,},
+        //     {index: 4,name: "食材",value: Data[4].value+local.cost,},
+        //   ]);
+        // }
       })
     }
     settotalPayment(localTotalSpent)
@@ -298,7 +367,6 @@ function App() {
 
   // 追加情報選択後送信
   const addInfo =()=> {
-    // readLocal()
     setCredit(false) // 送信時にfalseにすることでtrueのみテーブルに乗るときのバグを防ぐ
     //本日の日付取得獲得
     const hiduke=new Date(); 
@@ -308,12 +376,33 @@ function App() {
     const resultArray = [... results, resultArr]
     setLocalInfo(resultArray)
     resultsD(resultArray) //この時まだresultsにsetされていないのはあるあるだからresultArrayを使うのが適切。
+
+    //今週の残高ローカル更新
+    const allLeft = leftCost-parseInt(inputCost.current.value)
+    localStorage.setItem('leftCost',JSON.stringify(allLeft)); 
+    setleftCost(leftCost-parseInt(inputCost.current.value)) //leftCost更新
+
+    //合計使用額
+    let localTotal = null
+    if (totalPayment){
+      localTotal = parseInt(totalPayment) + parseInt(inputCost.current.value)
+    }else {
+      localTotal = parseInt(inputCost.current.value)
+    }
+    settotalPayment(localTotal)
+    localStorage.setItem('total', JSON.stringify(localTotal)); 
+
+    if(credit){// trueのみテーブルに乗るときのバグを防ぐ
+      setDataTable(DataTable.concat({ 日付: month+ '.' + day, カテゴリ: category, 利用金額: '¥' + parseInt(inputCost.current.value) },))
+      setCreditTotal(CreditTotal + parseInt(inputCost.current.value))
+    }
+    
     resultArray.map((result, index) => {
       result.cost = parseInt(result.cost)
-      if(result.credit){// trueのみテーブルに乗るときのバグを防ぐ
-        setDataTable(DataTable.concat({ 日付: result.date, カテゴリ: result.category, 利用金額: '¥' + result.cost },))
-        setCreditTotal(CreditTotal + result.cost)
-      }
+      // if(result.credit){// trueのみテーブルに乗るときのバグを防ぐ
+      //   setDataTable(DataTable.concat({ 日付: result.date, カテゴリ: result.category, 利用金額: '¥' + result.cost },))
+      //   setCreditTotal(CreditTotal + result.cost)
+      // }
       //各選択されたカテゴリ以外はデータをそのままに、選択のもののみデータを追加してグラフに反映させる
       if(result.category==="おやつ"){
         setData([
@@ -358,8 +447,11 @@ function App() {
           {index: index,name: "食材",value: Data[4].value+result.cost,},
         ]);
       }
-      settotalPayment(parseInt(totalPayment) + parseInt(result.cost))
-      setleftCost(leftCost-result.cost-totalPayment);//使用可能金額の算出
+
+      // settotalPayment(parseInt(totalPayment) + parseInt(result.cost))
+      // setleftCost(leftCost-result.cost);//使用可能金額の算出
+      // const allLeft = leftCost-result.cost-totalPayment
+      // localStorage.setItem('leftCost',allLeft);
     })
   }
 
