@@ -54,6 +54,7 @@ function App() {
     const inputCost = React.useRef()  //input連続入力機能
     const LeftCost = React.useRef()  //input連続入力機能
     const classes = useStyles();
+    const [goalCost, setGoalCost] = useState(0);
     const [credit,setCredit] = useState(false); //クレカ利用選択ならtrue
     const [category,categoryD] = useState("");// 選択済みカテゴリ
     const [totalPayment, settotalPayment] = useState();// 今月支払い合計
@@ -123,6 +124,9 @@ function App() {
           <Button variant="contained" size="large" disableElevation className="inputCost" onClick={addInfo}>送信</Button>
         </div>
         <p className="leftMoney">今週は残り<span className="leftCost">¥{leftCost}</span>使えるよ！</p>
+        <p className="leftMoney">
+          <Button variant="contained" size="large" disableElevation color='secondary'className="inputCost, delete" onClick={bomb}>データ削除</Button>  
+        </p>
       </div>
     </div>
   )
@@ -152,6 +156,7 @@ function App() {
         ref={LeftCost}
       />
       <Button variant="contained" size="large" disableElevation className="inputCost" onClick={ setGoal }>送信</Button>
+      <p className="leftMoney">今回の目標は<span className="leftCost">¥{goalCost}</span>です！頑張りましょう！</p>
     </div>
   )
 
@@ -263,110 +268,83 @@ function App() {
   
   //目標金額の入力値を残高にセット
   const setGoal=()=>{
+    //leftcostにいれる
     setleftCost(LeftCost.current.value)
     const currentLeftCost = LeftCost.current.value //そのままではsetできてないから変数に入れてからlocalStorageにいれる
     localStorage.setItem('leftCost',currentLeftCost);
+
+    //goalcostにいれる
+    setGoalCost(LeftCost.current.value)
+    const currentGoalCost = LeftCost.current.value //そのままではsetできてないから変数に入れてからlocalStorageにいれる
+    localStorage.setItem('goalCost',currentGoalCost);
   }
 
-  //ローカルストレージ機能関数
+  //localData削除
+  const bomb=()=>{
+    localStorage.clear()
+    readLocal()
+  }
+
+  //ローカルストレージ関数
   const readLocal=()=>{
+    const localCredit = JSON.parse(localStorage.getItem('creditTotal'))
     const localLeftCost = JSON.parse(localStorage.getItem('leftCost'))
-    setleftCost(localLeftCost)
     const localAll = JSON.parse(localStorage.getItem('info'))
+    const goalLocal =JSON.parse(localStorage.getItem('goalCost'))
     const localTable = []
-    let localTotalSpent = null;
+    var localTotalSpent = JSON.parse(localStorage.getItem('total'));
+    let a = 
+    [
+      {index: 0, name: 'おやつ', value: 0,},
+      {index: 1, name: '交際費', value: 0,},
+      {index: 2, name: 'ショッピング', value: 0,},
+      {index: 3, name: '外食', value: 0,},
+      {index: 4, name: '食材', value: 0,}
+    ]
+
     if(localAll){
       localAll.map((local)=>{
+        console.log(localTotalSpent)
         local.cost = parseInt(local.cost) //コストをintに
-        localTotalSpent = localTotalSpent + local.cost
         if(local.credit){
           localTable.push({ 日付: local.date, カテゴリ: local.category, 利用金額: '¥' + local.cost })
         }
+
+        //グラフにdata代入
         if(local.category==="おやつ"){
-          const changedState = {...Data};
-          changedState[0].value = Data[0].value+local.cost;
+          a[0].value += local.cost
         }else if(local.category==="交際費"){
-          const changedState = {...Data};
-          console.log(changedState[1].value)
-          console.log(Data[1].value+local.cost)
-          changedState[1].value = Data[1].value+local.cost;
-          setData(changedState);
-          console.log(changedState)
+          a[1].value += local.cost
         }else if(local.category==="ショッピング"){
-          const changedState = {...Data};
-          changedState[2].value = Data[2].value+local.cost;
-          setData(changedState);
+          a[2].value += local.cost
         }else if(local.category==="外食"){
-          const changedState = {...Data};
-          changedState[3].value = Data[3].value+local.cost;
-          setData(changedState);
+          a[3].value += local.cost
         }else if(local.category==="食材"){
-          const changedState = {...Data};
-          changedState[4].value = Data[4].value+local.cost;
-          setData(changedState);
+          a[4].value += local.cost
         }
-        // if(local.category==="おやつ"){
-        //   setData([
-        //     {index: 0,name: 'おやつ',value: Data[0].value+local.cost,},
-        //     {index: 1,name: "交際費",value: Data[1].value,},
-        //     {index: 2,name: "ショッピング",value: Data[2].value,},
-        //     {index: 3,name: "外食",value: Data[3].value,},
-        //     {index: 4,name: "食材",value: Data[4].value,},
-        // ]);
-        // }else if(local.category==="交際費"){
-        //   setData([
-        //       {index: 0,name: 'おやつ',value: Data[0].value,},
-        //       {index: 1,name: "交際費",value: Data[1].value+local.cost,},
-        //       {index: 2,name: "ショッピング",value: Data[2].value,},
-        //       {index: 3,name: "外食",value: Data[3].value,},
-        //       {index: 4,name: "食材",value: Data[4].value,
-        //     },
-        //   ]);
-        // }else if(local.category==="ショッピング"){
-        //   console.log(Data)
-        //   setData([
-        //     {index: 0,name: 'おやつ',value: Data[0].value,},
-        //     {index: 1,name: "交際費",value: Data[1].value,},
-        //     {index: 2,name: "ショッピング",value: Data[2].value+local.cost,
-        //     },
-        //     {index: 3,name: "外食",value: Data[3].value,},
-        //     {index: 4,name: "食材",value: Data[4].value,},
-        //   ]);
-        // }else if(local.category==="外食"){
-        //   setData([
-        //     {index: 0,name: 'おやつ',value: Data[0].value,},
-        //     {index: 1,name: "交際費",value: Data[1].value,},
-        //     {index: 2,name: "ショッピング",value: Data[2].value,},
-        //     {index: 3,name: "外食",value: Data[3].value+local.cost,},
-        //     {index: 4,name: "食材",value: Data[4].value,},
-        //   ]);
-        // }else if(local.category==="食材"){
-        //   setData([
-        //     {index: 0,name: 'おやつ',value: Data[0].value,},
-        //     {index: 1,name: "交際費",value: Data[1].value,},
-        //     {index: 2,name: "ショッピング",value: Data[2].value,},
-        //     {index: 3,name: "外食",value: Data[3].value,},
-        //     {index: 4,name: "食材",value: Data[4].value+local.cost,},
-        //   ]);
-        // }
       })
     }
+    setData(a);
+    setGoalCost(goalLocal)
+    setCreditTotal(localCredit)
     settotalPayment(localTotalSpent)
-    resultsD(results.concat(localTable))
+    setleftCost(localLeftCost)
+    resultsD(results.concat(localAll))
     setDataTable(DataTable.concat(localTable))
   }
 
   //入力情報詳細をlocalStorageに保存
   const setLocalInfo=(resultArray)=>{
-    if(resultArray){
-      localStorage.setItem('info',JSON.stringify(resultArray));
+    console.log(resultArray)
+    const x = resultArray.filter(v => v)
+    if(x){
+      localStorage.setItem('info',JSON.stringify(x));
     }
   }
 
   // 追加情報選択後送信
   const addInfo =()=> {
     setCredit(false) // 送信時にfalseにすることでtrueのみテーブルに乗るときのバグを防ぐ
-    //本日の日付取得獲得
     const hiduke=new Date(); 
     const month = hiduke.getMonth()+1;
     const day = hiduke.getDate();
@@ -381,67 +359,79 @@ function App() {
     setleftCost(leftCost-parseInt(inputCost.current.value)) //leftCost更新
 
     //合計使用額
-    let localTotal = null
+    let localTotal = JSON.parse(localStorage.getItem('total'))
     if (totalPayment){
       localTotal = parseInt(totalPayment) + parseInt(inputCost.current.value)
     }else {
       localTotal = parseInt(inputCost.current.value)
     }
+    console.log(localTotal)
     settotalPayment(localTotal)
     localStorage.setItem('total', JSON.stringify(localTotal)); 
+
+    //クレカ合計使用額
+    let localCreditTotal = JSON.parse(localStorage.getItem('creditTotal'))
+    if (CreditTotal){
+      localCreditTotal = parseInt(CreditTotal) + parseInt(inputCost.current.value)
+    }else {
+      localCreditTotal = parseInt(inputCost.current.value)
+    }
 
     if(credit){// trueのみテーブルに乗るときのバグを防ぐ
       setDataTable(DataTable.concat({ 日付: month+ '.' + day, カテゴリ: category, 利用金額: '¥' + parseInt(inputCost.current.value) },))
       setCreditTotal(CreditTotal + parseInt(inputCost.current.value))
+      localStorage.setItem('creditTotal',JSON.stringify(localCreditTotal));
     }
-    
-    resultArray.map((result, index) => {
-      result.cost = parseInt(result.cost)
-      //各選択されたカテゴリ以外はデータをそのままに、選択のもののみデータを追加してグラフに反映させる
-      if(result.category==="おやつ"){
-        setData([
-          {index: 0,name: 'おやつ',value: Data[0].value+result.cost,},
-          {index: index,name: "交際費",value: Data[1].value,},
-          {index: index,name: "ショッピング",value: Data[2].value,},
-          {index: index,name: "外食",value: Data[3].value,},
-          {index: index,name: "食材",value: Data[4].value,},
-      ]);
-      }else if(result.category==="交際費"){
-        setData([
-            {index: 0,name: 'おやつ',value: Data[0].value,},
-            {index: index,name: "交際費",value: Data[1].value+result.cost,},
+    if(resultArray){
+      resultArray.map((result, index) => {
+        if(result === null)return
+        result.cost = parseInt(result.cost)
+        //各選択されたカテゴリ以外はデータをそのままに、選択のもののみデータを追加してグラフに反映させる
+        if(result.category==="おやつ"){
+          setData([
+            {index: 0,name: 'おやつ',value: Data[0].value+result.cost,},
+            {index: index,name: "交際費",value: Data[1].value,},
             {index: index,name: "ショッピング",value: Data[2].value,},
             {index: index,name: "外食",value: Data[3].value,},
-            {index: index,name: "食材",value: Data[4].value,
-          },
+            {index: index,name: "食材",value: Data[4].value,},
         ]);
-      }else if(result.category==="ショッピング"){
-        setData([
-          {index: 0,name: 'おやつ',value: Data[0].value,},
-          {index: index,name: "交際費",value: Data[1].value,},
-          {index: index,name: "ショッピング",value: Data[2].value+result.cost,
-          },
-          {index: index,name: "外食",value: Data[3].value,},
-          {index: index,name: "食材",value: Data[4].value,},
-        ]);
-      }else if(result.category==="外食"){
-        setData([
-          {index: 0,name: 'おやつ',value: Data[0].value,},
-          {index: index,name: "交際費",value: Data[1].value,},
-          {index: index,name: "ショッピング",value: Data[2].value,},
-          {index: index,name: "外食",value: Data[3].value+result.cost,},
-          {index: index,name: "食材",value: Data[4].value,},
-        ]);
-      }else if(result.category==="食材"){
-        setData([
-          {index: 0,name: 'おやつ',value: Data[0].value,},
-          {index: index,name: "交際費",value: Data[1].value,},
-          {index: index,name: "ショッピング",value: Data[2].value,},
-          {index: index,name: "外食",value: Data[3].value,},
-          {index: index,name: "食材",value: Data[4].value+result.cost,},
-        ]);
-      }
-    })
+        }else if(result.category==="交際費"){
+          setData([
+              {index: 0,name: 'おやつ',value: Data[0].value,},
+              {index: index,name: "交際費",value: Data[1].value+result.cost,},
+              {index: index,name: "ショッピング",value: Data[2].value,},
+              {index: index,name: "外食",value: Data[3].value,},
+              {index: index,name: "食材",value: Data[4].value,
+            },
+          ]);
+        }else if(result.category==="ショッピング"){
+          setData([
+            {index: 0,name: 'おやつ',value: Data[0].value,},
+            {index: index,name: "交際費",value: Data[1].value,},
+            {index: index,name: "ショッピング",value: Data[2].value+result.cost,
+            },
+            {index: index,name: "外食",value: Data[3].value,},
+            {index: index,name: "食材",value: Data[4].value,},
+          ]);
+        }else if(result.category==="外食"){
+          setData([
+            {index: 0,name: 'おやつ',value: Data[0].value,},
+            {index: index,name: "交際費",value: Data[1].value,},
+            {index: index,name: "ショッピング",value: Data[2].value,},
+            {index: index,name: "外食",value: Data[3].value+result.cost,},
+            {index: index,name: "食材",value: Data[4].value,},
+          ]);
+        }else if(result.category==="食材"){
+          setData([
+            {index: 0,name: 'おやつ',value: Data[0].value,},
+            {index: index,name: "交際費",value: Data[1].value,},
+            {index: index,name: "ショッピング",value: Data[2].value,},
+            {index: index,name: "外食",value: Data[3].value,},
+            {index: index,name: "食材",value: Data[4].value+result.cost,},
+          ]);
+        }
+      })
+    }
   }
 
   //第二引数指定でDOM描画時のみ関数実行
