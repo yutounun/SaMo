@@ -145,3 +145,6 @@ header {
   bottom: 110px;
   right: 260px;
 }
+.delete {
+  height: 50px;
+}
