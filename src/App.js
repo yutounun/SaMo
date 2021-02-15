@@ -107,20 +107,18 @@ function App() {
           <Button variant="outlined" disableElevation className="category" onClick={()=>{
             categoryD('食材')
           }}><KitchenOutlinedIcon/><span className="category_title">食材</span></Button>
-          <Button size="small" disableElevation variant="contained" className="plus">+</Button>
-          <Button size="small" disableElevation variant="contained" className="minus">-</Button>
         </div>
         <div className="creditNcost">
-          <Button size="medium" variant="contained" color="primary" disableElevation className="category creditCard"  onClick={()=>{
+          <span className="yen">¥</span>
+          <input 
+            type="text" 
+            className="inputCost"
+            placeholder="金額"
+            ref={inputCost}
+          />
+          <Button size="medium" variant="contained" color="primary" disableElevation className="phone category creditCard"  onClick={()=>{
             setCredit(true)
           }}><CreditCardIcon/><span className="category_title">クレカ</span></Button>
-          <span className="yen">¥</span>
-            <input 
-              type="text" 
-              className="inputCost"
-              placeholder="金額"
-              ref={inputCost}
-            />
           <Button variant="contained" size="large" disableElevation className="inputCost" onClick={addInfo}>送信</Button>
         </div>
         <p className="leftMoney">今週は残り<span className="leftCost">¥{leftCost}</span>使えるよ！</p>
@@ -148,15 +146,18 @@ function App() {
         <div className="App-header">SaMo</div>
       </header>
       <h2>目標</h2>
-      <span className="yen">¥</span>
-      <input 
-        type="text" 
-        className="inputCost"
-        placeholder="金額"
-        ref={LeftCost}
-      />
-      <Button variant="contained" size="large" disableElevation className="inputCost" onClick={ setGoal }>送信</Button>
-      <p className="leftMoney">今回の目標は<span className="leftCost">¥{goalCost}</span>です！頑張りましょう！</p>
+      <div className="goal">
+        <span className="yen">¥</span>
+        <input 
+          type="text" 
+          className="inputCost inputGoal"
+          placeholder="金額"
+          ref={LeftCost}
+        />
+        <Button variant="contained" size="large" disableElevation className="inputCost sendGoal" onClick={ setGoal }>送信</Button>
+        <p className="leftMoney">今回の目標は<span className="leftCost">¥{goalCost}</span>です！
+        <br/>頑張りましょう！</p>
+      </div>
     </div>
   )
 
@@ -179,8 +180,8 @@ function App() {
       <div className="graphPage">
         <div className="graph">
           <h3>カテゴリ別利用金額</h3>
-          <PieChart width={700} height={400}>
-            <Pie data={Data} dataKey="value" cx="50%" cy="50%" outerRadius={150} fill="#82ca9d" label={label}>
+          <PieChart width={380} height={300}>
+            <Pie data={Data} dataKey="value" cx="50%" cy="50%" outerRadius={100} fill="#82ca9d" label={label}>
             {
               Data.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
             }
@@ -194,9 +195,9 @@ function App() {
             <div style={tableStyle}>
               <ReactFlexyTable data={DataTable} />
             </div>
-            <h4 className="displayCreditTotal">今週は合計¥{CreditTotal}利用済み</h4>
           </div>
         </div>
+        <h4 className="displayCreditTotal">今週は合計¥{CreditTotal}利用済み</h4>
       </div>
     </div>
   )
@@ -205,7 +206,7 @@ function App() {
   const tableStyle = {
     width: "100%",
     margin: "0 auto",
-    marginTop: 70,
+    marginTop: 10,
   };
   const [state, setState] = React.useState({
     top: false,
@@ -218,18 +219,8 @@ function App() {
     const textAnchor = x > cx ? "start" : "end";
     return (
       <>
-        <Text x={x} y={y} textAnchor={textAnchor} fill="#82ca9d">
-          {name}
-        </Text>
-        <Text
-          x={x}
-          y={y}
-          dominantBaseline="hanging"
-          textAnchor={textAnchor}
-          fill="#82ca9d"
-        >
-          {"¥"+value}
-        </Text>
+        <Text x={x} y={y} fill="#82ca9d">{name}</Text>
+        <Text x={x} y={y} dominantBaseline="hanging" fill="#82ca9d">{"¥"+value}</Text>
       </>
     );
   };

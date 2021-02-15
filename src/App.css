@@ -1,6 +1,5 @@
 .App {
   background: #fafafa;
-  height: 100vh;
   text-align: center;
   font-weight: bold;
   font-family: Arial;
@@ -147,4 +146,66 @@ header {
 }
 .delete {
   height: 50px;
+}
+
+@media screen and (max-width:480px) { 
+  .graphPage {
+    display: block;
+  }
+  .graph, .table {
+    width: 100%;
+  }
+  .table {
+    margin-right: 20px;
+  }
+ .inputCost {
+  width: 70%;
+  height: 50%;
+ }
+ .categories .MuiButton-outlined {
+   margin: 0;
+   width: 120px;
+   height: 70px;
+ } 
+ .inputCost {
+    width: 70%;
+    height: 30%;
+    margin: 0;
+  }
+  .yen {
+  margin: 0;
+  }
+  .creditNcost .MuiButton-disableElevation {
+    border-radius: 200px;
+    margin-bottom: 30px;
+    margin: 10px auto;
+    height: 60px;
+  }
+  .categories {
+    margin-top: 1vh;
+  }
+  .creditNcost {
+    margin: 50px 0;
+  }
+  .phone {
+    display: inline-block;
+  }
+  .PC {
+    display: none !important;
+  }
+  .sendGoal {
+    width: 30%;
+  }
+  .inputGoal {
+    margin-bottom: 30px;
+  }
+  .table {
+    width: 100%;
+  }
+  .displayCreditTotal {
+    position: initial;
+  }
+  .table h3 {
+    margin-top: 80px;
+  }
 }
