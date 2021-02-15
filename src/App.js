@@ -335,7 +335,6 @@ function App() {
 
   //入力情報詳細をlocalStorageに保存
   const setLocalInfo=(resultArray)=>{
-    console.log(resultArray)
     const x = resultArray.filter(v => v)
     if(x){
       localStorage.setItem('info',JSON.stringify(x));
