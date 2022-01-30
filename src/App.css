@@ -131,3 +131,20 @@ header {
 .category_title {
   margin-left: 8px;
 }
+.graphPage {
+  display: flex;
+}
+.graph, .table {
+  width: 50%;
+}
+.table {
+  margin-right: 20px;
+}
+.displayCreditTotal {
+  position: absolute;
+  bottom: 110px;
+  right: 260px;
+}
+.delete {
+  height: 50px;
+}
